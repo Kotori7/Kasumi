@@ -12,7 +12,8 @@ namespace Kasumi.Economy
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Kasumi;Trusted_Connection=True;");
+            //optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Kasumi;Trusted_Connection=True;");
+            optionsBuilder.UseSqlite(@"Data Source=bank.db");
         }
     }
     public class BankAccount

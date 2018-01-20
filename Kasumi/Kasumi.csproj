@@ -10,6 +10,7 @@
     <PackageReference Include="DSharpPlus.CommandsNext" Version="4.0.0-beta-00405" />
     <PackageReference Include="DSharpPlus.VoiceNext" Version="4.0.0-beta-00405" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
   </ItemGroup>
   
