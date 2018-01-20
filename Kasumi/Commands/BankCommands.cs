@@ -66,6 +66,11 @@ namespace Kasumi.Commands
                 await ctx.RespondAsync("You don't have enough funds.");
                 return;
             }
+            if(amount < 0)
+            {
+                await ctx.RespondAsync("Stealing money is highly illegal.");
+                return;
+            }
             Bank.MoveMoney(ctx.User.Id.ToString(), user.Id.ToString(), amount);
             await ctx.RespondAsync($"Sent O${amount.ToString()} to {user.Username}.");
         }
