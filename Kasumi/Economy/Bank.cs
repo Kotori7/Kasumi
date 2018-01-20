@@ -8,7 +8,7 @@ namespace Kasumi.Economy
         /// Creates a bank account with the specified user id.
         /// </summary>
         /// <param name="id">Discord User ID</param>
-        public static void CreateAccount(ulong id)
+        public static void CreateAccount(string id)
         {
             using(var db = new BankContext())
             {
@@ -22,7 +22,7 @@ namespace Kasumi.Economy
         /// </summary>
         /// <param name="id">ID of account to search for.</param>
         /// <returns>decimal</returns>
-        public static decimal GetBalance(ulong id)
+        public static decimal GetBalance(string id)
         {
             using(var db = new BankContext())
             {
@@ -37,7 +37,7 @@ namespace Kasumi.Economy
         /// <param name="fromId">ID of user to take money from.</param>
         /// <param name="toId">ID of user to give money to.</param>
         /// <param name="amount">Amount of money to transfer.</param>
-        public static void MoveMoney(ulong fromId, ulong toId, decimal amount)
+        public static void MoveMoney(string fromId, string toId, decimal amount)
         {
             using(var db = new BankContext())
             {
@@ -51,7 +51,7 @@ namespace Kasumi.Economy
         /// </summary>
         /// <param name="id">ID of user.</param>
         /// <param name="amount">Amount to hack in.</param>
-        public static void HackMoney(ulong id, decimal amount)
+        public static void HackMoney(string id, decimal amount)
         {
             using(var db = new BankContext())
             {
@@ -64,7 +64,7 @@ namespace Kasumi.Economy
         /// </summary>
         /// <param name="id">User ID to check.</param>
         /// <returns>bool</returns>
-        public static bool CheckExistance(ulong id)
+        public static bool CheckExistance(string id)
         {
             using(var db = new BankContext())
             {
