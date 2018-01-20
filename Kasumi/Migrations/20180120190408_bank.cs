@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Kasumi.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class bank : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,8 +13,7 @@ namespace Kasumi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    Balance = table.Column<decimal>(nullable: false),
-                    Happiness = table.Column<int>(nullable: false)
+                    Balance = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {

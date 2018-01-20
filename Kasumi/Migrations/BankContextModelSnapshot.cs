@@ -17,8 +17,7 @@ namespace Kasumi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
             modelBuilder.Entity("Kasumi.Economy.BankAccount", b =>
                 {
@@ -26,8 +25,6 @@ namespace Kasumi.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Balance");
-
-                    b.Property<int>("Happiness");
 
                     b.HasKey("Id");
 

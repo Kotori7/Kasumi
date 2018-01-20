@@ -57,7 +57,7 @@ namespace Kasumi.Commands
                 {
                     user = await ctx.Guild?.GetMemberAsync(id) ?? await ctx.Client.GetUserAsync(id);
                 }
-                catch (Exception e)
+                catch
                 {
                     await ctx.RespondAsync("Unable to find that user.");
                     return;

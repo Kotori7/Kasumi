@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
+using Kasumi.Economy;
 
 namespace Kasumi.Commands
 {
@@ -49,7 +49,25 @@ namespace Kasumi.Commands
         [Description("Pets Kasumi.")]
         public async Task Pet(CommandContext ctx)
         {
-            await ctx.RespondAsync(PetResponses[rng.Next(0, PetResponses.Length)]);
+            Happiness.IncrementHappiness(ctx.User.Id, rng.Next(0, 5));
+            switch (Happiness.GetHappinessLevel(ctx.User.Id))
+            {
+                case Entities.HappinessLevel.Dispise:
+                    await ctx.RespondAsync("Fuck off!");
+                    return;
+                case Entities.HappinessLevel.Hate:
+                    await ctx.RespondAsync("Ehh.");
+                    return;
+                case Entities.HappinessLevel.Like:
+                    await ctx.RespondAsync("Thanks!");
+                    return;
+                case Entities.HappinessLevel.Love:
+                    await ctx.RespondAsync("<3");
+                    return;
+                case Entities.HappinessLevel.Neutral:
+                    await ctx.RespondAsync("Thank you.");
+                    return;
+            }
         }
         
         [Command("8ball")]

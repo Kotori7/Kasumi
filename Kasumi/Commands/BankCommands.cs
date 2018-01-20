@@ -18,7 +18,16 @@ namespace Kasumi.Commands
                 await ctx.RespondAsync("You must have an account to check your balance.");
                 return;
             }
-            await ctx.RespondAsync(Bank.GetBalance(ctx.User.Id.ToString()).ToString());
+            DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder();
+            //embedBuilder.Author = new DiscordEmbedBuilder.EmbedAuthor
+            //{
+            //    Name = "Kasumi",
+            //    IconUrl = ctx.Client.CurrentUser.AvatarUrl
+            //};
+            //embedBuilder.AddField("", Bank.GetBalance(ctx.User.Id.ToString()).ToString());
+            embedBuilder.Title = ctx.User.Username + "'s balance.";
+            embedBuilder.Description = Bank.GetBalance(ctx.User.Id.ToString()).ToString();
+            await ctx.RespondAsync(embed: embedBuilder.Build());
         }
         [Command("account")]
         [Description("Creates your bank account.")]
@@ -58,6 +67,7 @@ namespace Kasumi.Commands
                 return;
             }
             Bank.MoveMoney(ctx.User.Id.ToString(), user.Id.ToString(), amount);
+            await ctx.RespondAsync($"Sent O${amount.ToString()} to {user.Username}.");
         }
         [Command("setbal")]
         [Description("Hacks someone's balance.")]
@@ -69,6 +79,7 @@ namespace Kasumi.Commands
                 return;
             }
             Bank.HackMoney(user.Id.ToString(), amount);
+            await ctx.RespondAsync($"Set {user.Username}'s balance to {amount.ToString()}.");
         }
     }
 }

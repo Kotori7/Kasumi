@@ -21,7 +21,6 @@ namespace Kasumi.Economy
         [Key]
         public string Id { get; set; }
         public decimal Balance { get; set; }
-        public int Happiness { get; set; }
         public List<BankTransaction> Transactions { get; set; }
     }
     public class BankTransaction

@@ -11,15 +11,14 @@ using System;
 namespace Kasumi.Migrations
 {
     [DbContext(typeof(BankContext))]
-    [Migration("20180120153726_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20180120190408_bank")]
+    partial class bank
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
             modelBuilder.Entity("Kasumi.Economy.BankAccount", b =>
                 {
@@ -27,8 +26,6 @@ namespace Kasumi.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Balance");
-
-                    b.Property<int>("Happiness");
 
                     b.HasKey("Id");
 

@@ -10,7 +10,6 @@ namespace Kasumi.Entities
         string Name;
         string Discriminator;
         string FullName;
-        BotPermissionLevel PermLevel;
         string AvatarUrl;
         DateTime CreationDate;
         public User(DiscordUser user)
