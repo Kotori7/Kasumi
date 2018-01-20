@@ -53,6 +53,7 @@ namespace Kasumi
             //Commands.RegisterCommands<ImageAnalysisCommand>();
             Commands.RegisterCommands<HashingCommands>();
             Commands.RegisterCommands<ModerationCommands>();
+            Commands.RegisterCommands<BankCommands>();
             Globals.StartTime = DateTime.Now;
             await Client.ConnectAsync();
             await Task.Delay(-1);
