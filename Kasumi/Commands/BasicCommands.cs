@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using DSharpPlus;
@@ -30,15 +31,15 @@ namespace Kasumi.Commands
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("I've been up and running for ");
-            if(((DateTime.Now - Globals.StartTime).Days) != 0)
+            if (((DateTime.Now - Globals.StartTime).Days) != 0)
             {
                 sb.Append($"{(DateTime.Now - Globals.StartTime).Days} days ");
             }
-            if(((DateTime.Now - Globals.StartTime).Hours) != 0)
+            if (((DateTime.Now - Globals.StartTime).Hours) != 0)
             {
                 sb.Append($"{(DateTime.Now - Globals.StartTime).Hours} hours ");
             }
-            if(((DateTime.Now - Globals.StartTime).Minutes) != 0)
+            if (((DateTime.Now - Globals.StartTime).Minutes) != 0)
             {
                 sb.Append($"{(DateTime.Now - Globals.StartTime).Minutes} minutes ");
             }
@@ -47,18 +48,23 @@ namespace Kasumi.Commands
         }
         [Command("shutdown")]
         [Hidden]
+        [RequireOwner]
         public async Task Shutdown(CommandContext ctx)
         {
-            if(ctx.User.Id == 235019900618407937)
-            {
-                await ctx.RespondAsync("Farewell!");
-                await ctx.Client.DisconnectAsync();
-                Environment.Exit(0);
-            }
-            else
-            {
-                await ctx.RespondAsync("No chance.");
-            }
+            await ctx.RespondAsync("Farewell!");
+            await ctx.Client.DisconnectAsync();
+            Environment.Exit(0);
+        }
+        [Command("info")]
+        [Description("Shows information about the bot.")]
+        public async Task Info(CommandContext ctx)
+        {
+            DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder();
+            embedBuilder.AddField("System Version", Environment.OSVersion.VersionString);
+            embedBuilder.AddField("Architecture", Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE"), true);
+            embedBuilder.AddField("RAM Usage", (Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024).ToString() + "MB", true);
+            embedBuilder.AddField("Bot Version", System.IO.File.ReadAllText("version"));
+            await ctx.RespondAsync(embed: embedBuilder.Build());
         }
     }
 }

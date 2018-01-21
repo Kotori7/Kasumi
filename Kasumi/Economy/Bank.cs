@@ -71,5 +71,13 @@ namespace Kasumi.Economy
                 return db.Accounts.Count(b => b.Id == id) == 1;
             }
         }
+        public static void FineUser(ulong id, decimal amount)
+        {
+            using(var db = new BankContext())
+            {
+                db.Accounts.Single(b => b.Id == id.ToString()).Balance -= amount;
+                db.SaveChanges();
+            }
+        }
     }
 }

@@ -86,5 +86,18 @@ namespace Kasumi.Commands
             Bank.HackMoney(user.Id.ToString(), amount);
             await ctx.RespondAsync($"Set {user.Username}'s balance to {amount.ToString()}.");
         }
+        [Command("fine")]
+        [Description("Fines a user for some money.")]
+        [RequireOwner]
+        public async Task Fine(CommandContext ctx, DiscordUser user, decimal amount)
+        {
+            if (!Bank.CheckExistance(user.Id.ToString()))
+            {
+                await ctx.RespondAsync("That user doesn't have a bank account.");
+                return;
+            }
+            Bank.FineUser(user.Id, amount);
+            await ctx.RespondAsync($"Fined {user.Username} O${amount.ToString()}");
+        }
     }
 }
