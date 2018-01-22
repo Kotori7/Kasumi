@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -47,6 +48,17 @@ namespace Kasumi.Commands
             }
             vnc.Disconnect();
             await ctx.RespondAsync("Disconnected.");
+        }
+        [Command("play")]
+        [Description("Plays a song from the url (via youtube-dl) or an attached file.")]
+        public async Task Play(CommandContext ctx, [RemainingText] string url)
+        {
+            var vnc = ctx.Client.GetVoiceNext().GetConnection(ctx.Guild);
+            if(vnc == null)
+            {
+                await ctx.RespondAsync("I'm not connected to a voice channel here.");
+                return;
+            }
         }
     }
 }
