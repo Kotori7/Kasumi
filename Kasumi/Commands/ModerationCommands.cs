@@ -10,7 +10,7 @@ namespace Kasumi.Commands
         [Command("ban")]
         [Description("Bans a user.")]
         [RequirePermissions(DSharpPlus.Permissions.BanMembers)]
-        public async Task Ban(CommandContext ctx, DiscordMember mem, string reason)
+        public async Task Ban(CommandContext ctx, DiscordMember mem, [RemainingText] string reason)
         {
             await ctx.Guild.BanMemberAsync(mem, 0, $"[Ban by {ctx.User.Username}#{ctx.User.Discriminator}] {reason}");
             await ctx.RespondAsync($"{mem.Username}#{mem.Discriminator} got bent");
