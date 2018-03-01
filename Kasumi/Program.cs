@@ -26,6 +26,7 @@ namespace Kasumi
             var config = JsonConvert.DeserializeObject<ConfigJson>(json);
             Globals.Token = config.Token;
             Globals.Prefix = config.Prefix;
+            Globals.OsuKey = config.OsuKey;
             // Run the actual bot.
             Bot.BotMain().GetAwaiter().GetResult();
             // Exit with the bot's exit code

@@ -3,7 +3,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using Kasumi.Economy;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
 
 namespace Kasumi.Commands
 {
@@ -76,5 +79,40 @@ namespace Kasumi.Commands
         {
             await ctx.RespondAsync(":8ball: | " + EightBallResponses[rng.Next(20)]);
         }
+        [Command("osu")]
+        [Description("Retrieves a user's osu! stats.")]
+        public async Task Osu(CommandContext ctx, string user, [Description("0 = osu!, 1 = Taiko, 2 = CtB, 3 = Mania")] int mode)
+        {
+            if (mode >= 4 || mode <= -1)
+            {
+                await ctx.RespondAsync("Invalid mode specified.");
+                return;
+            }
+            HttpClient client = new HttpClient();
+            string url = $"https://osu.ppy.sh/api/get_user?k={Globals.OsuKey}&u={user}&m={mode}";
+            HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Get, url);
+            HttpResponseMessage resp = await client.SendAsync(req);
+            string response = await resp.Content.ReadAsStringAsync();
+            JArray a = JArray.Parse(response);
+            JObject o = JObject.Parse(a[0].ToString());
+            DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder();
+            embedBuilder.Author = new DiscordEmbedBuilder.EmbedAuthor
+            {
+                Name = "Kasumi",
+                IconUrl = ctx.Client.CurrentUser.AvatarUrl
+            };
+            embedBuilder.AddField("User ID", o["user_id"].ToString(), true);
+            embedBuilder.AddField("Username", o["username"].ToString(), true);
+            embedBuilder.AddField("Country", o["country"].ToString(), true);
+            embedBuilder.AddField("Profile URL", $"https://osu.ppy.sh/user/{o["user_id"].ToString()}", true);
+            embedBuilder.AddField("Play Count", o["playcount"].ToString(), true);
+            embedBuilder.AddField("Ranked Score", o["ranked_score"].ToString(), true);
+            embedBuilder.AddField("Total Score", o["total_score"].ToString(), true);
+            embedBuilder.AddField("Accuracy", o["accuracy"].ToString().Remove(5), true);
+            embedBuilder.AddField("SS Count", o["count_rank_ss"].ToString(), true);
+            embedBuilder.AddField("S Count", o["count_rank_s"].ToString(), true);
+            await ctx.RespondAsync(embed: embedBuilder.Build());
+        }
+        
     }
 }

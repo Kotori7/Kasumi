@@ -11,5 +11,6 @@ namespace Kasumi
         public static string Prefix { get; set; }
         public static int Happiness { get; set; } // may use at somne point idk
         public static DateTime StartTime { get; set; }
+        public static string OsuKey { get; set; }
     }
 }

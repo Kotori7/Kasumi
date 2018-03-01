@@ -8,5 +8,7 @@ namespace Kasumi.Entities
         public string Token { get; private set; }
         [JsonProperty("prefix")]
         public string Prefix { get; private set; }
+        [JsonProperty("osu_key")]
+        public string OsuKey { get; private set; }
     }
 }

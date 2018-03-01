@@ -15,6 +15,7 @@ namespace Kasumi
         public static DiscordClient Client { get; set; }
         public static CommandsNextExtension Commands { get; set; }
         public static VoiceNextExtension Voice { get; set; }
+        private static Random rng = new Random();
         public static async Task BotMain()
         {
             // Discord Client Configuration
@@ -47,8 +48,7 @@ namespace Kasumi
             Commands.RegisterCommands<BasicCommands>();
             Commands.RegisterCommands<InfoCommands>();
             Commands.RegisterCommands<FunCommands>();
-            //Commands.RegisterCommands<MusicCommands>();
-            //Commands.RegisterCommands<MALCommands>();
+            //Commands.RegisterCommands<ImageCommands>();
             Commands.RegisterCommands<NsfwCommands>();
             //Commands.RegisterCommands<ImageAnalysisCommand>();
             Commands.RegisterCommands<HashingCommands>();
@@ -58,6 +58,7 @@ namespace Kasumi
             await Client.ConnectAsync();
             await Task.Delay(-1);
         }
+
 
         private static Task Client_ClientErrored(DSharpPlus.EventArgs.ClientErrorEventArgs e)
         {
