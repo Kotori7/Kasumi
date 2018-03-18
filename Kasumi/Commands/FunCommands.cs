@@ -113,6 +113,39 @@ namespace Kasumi.Commands
             embedBuilder.AddField("S Count", o["count_rank_s"].ToString(), true);
             await ctx.RespondAsync(embed: embedBuilder.Build());
         }
-        
+        [Command("colour")]
+        [RequireBotPermissions(DSharpPlus.Permissions.ManageRoles)]
+        [Aliases("color")] // fuckin americans
+        public async Task Colour(CommandContext ctx, [Description("Hex code of a colour.")] string colour)
+        {
+            if(!Regex.IsMatch(colour, @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))
+            {
+                await ctx.RespondAsync("Invalid hex code.");
+                return;
+            }
+            foreach(DiscordRole r in ctx.Guild.Roles)
+            {
+                if(r.Name == "kasumi" + colour)
+                {
+                    await RemoveKasumiRoles(ctx.Member);
+                    await ctx.Member.GrantRoleAsync(r, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
+                    await ctx.RespondAsync("Updated your roles!");
+                    return;
+                }
+            }
+            DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DSharpPlus.Permissions.None, new DiscordColor(colour), false, false, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
+            await ctx.Member.GrantRoleAsync(rr, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
+            await ctx.RespondAsync("Updated your roles!");
+        }
+        private async Task RemoveKasumiRoles(DiscordMember m)
+        {
+            foreach(DiscordRole r in m.Roles)
+            {
+                if (r.Name.StartsWith("kasumi#"))
+                {
+                    await m.RevokeRoleAsync(r, "[Kasumi] Colour role cleanup.");
+                }
+            }
+        }
     }
 }

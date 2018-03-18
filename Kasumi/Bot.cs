@@ -24,6 +24,7 @@ namespace Kasumi
                 Token = Globals.Token,
                 TokenType = TokenType.Bot,
                 AutoReconnect = true,
+                //LogLevel = LogLevel.Debug,
                 LogLevel = LogLevel.Info,
                 UseInternalLogHandler = true
             };
