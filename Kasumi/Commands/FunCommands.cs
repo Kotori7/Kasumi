@@ -123,13 +123,26 @@ namespace Kasumi.Commands
                 await ctx.RespondAsync("Invalid hex code.");
                 return;
             }
+           foreach(DiscordRole r in ctx.Member.Roles)
+            {
+                //if(r.Name == "kasumi" + colour)
+                //{
+                //    await RemoveKasumiRoles(ctx.Member);
+                //    await ctx.Member.GrantRoleAsync(r, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
+                //    await ctx.RespondAsync("Updated your roles!");
+                //    return;
+                //}
+
+                if (r.Name.StartsWith("kasumi"))
+                {
+                    await ctx.Member.RevokeRoleAsync(r);
+                }
+            }
             foreach(DiscordRole r in ctx.Guild.Roles)
             {
                 if(r.Name == "kasumi" + colour)
                 {
-                    await RemoveKasumiRoles(ctx.Member);
-                    await ctx.Member.GrantRoleAsync(r, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
-                    await ctx.RespondAsync("Updated your roles!");
+                    await ctx.Member.GrantRoleAsync(r);
                     return;
                 }
             }
@@ -141,7 +154,7 @@ namespace Kasumi.Commands
         {
             foreach(DiscordRole r in m.Roles)
             {
-                if (r.Name.StartsWith("kasumi#"))
+                if (r.Name.StartsWith("kasumi"))
                 {
                     await m.RevokeRoleAsync(r, "[Kasumi] Colour role cleanup.");
                 }
