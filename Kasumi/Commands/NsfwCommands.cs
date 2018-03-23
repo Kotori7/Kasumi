@@ -35,10 +35,10 @@ namespace Kasumi.Commands
             HttpResponseMessage response = await client.GetAsync("https://danbooru.donmai.us/posts.json?limit=1&random=1&tags=" + String.Join("+", tags));
             string json = await response.Content.ReadAsStringAsync();
             JArray a = JArray.Parse(json);
-            JToken t = a[0];
-
-            string file = "https://danbooru.donmai.us" + t.Value<string>("file_url");
-            await ctx.RespondAsync(file);
+            string link = a[0].Value<string>("file_url");
+            if (!link.StartsWith("http"))
+                link = "https://danbooru.donmai.us" + link;
+            await ctx.RespondAsync(link);
         }
     }
 }

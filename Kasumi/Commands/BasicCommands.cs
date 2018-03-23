@@ -66,5 +66,12 @@ namespace Kasumi.Commands
             embedBuilder.AddField("Bot Version", System.IO.File.ReadAllText("version"));
             await ctx.RespondAsync(embed: embedBuilder.Build());
         }
+        [Command("status")]
+        [Description("Sets the bot's now playing status")]
+        [RequireOwner]
+        public async Task Status(CommandContext ctx, [RemainingText] string status)
+        {
+            await ctx.Client.UpdateStatusAsync(new DiscordActivity(status));
+        }
     }
 }
