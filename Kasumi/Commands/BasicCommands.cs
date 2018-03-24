@@ -69,9 +69,25 @@ namespace Kasumi.Commands
         [Command("status")]
         [Description("Sets the bot's now playing status")]
         [RequireOwner]
-        public async Task Status(CommandContext ctx, [RemainingText] string status)
+        public async Task Status(CommandContext ctx, string type, [RemainingText] string status)
         {
-            await ctx.Client.UpdateStatusAsync(new DiscordActivity(status));
+            switch (type)
+            {
+                case "p":
+                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Playing));
+                    break;
+                case "l":
+                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.ListeningTo));
+                    break;
+                case "w":
+                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Watching));
+                    break;
+                case "s":
+                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Streaming));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
