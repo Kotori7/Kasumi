@@ -13,11 +13,12 @@ namespace Kasumi.Commands
     [Description("fun commands")]
     public class FunCommands
     {
-        private string[] PetResponses = new[] { "Thanks!", "Meh.", "Okay then.", "Appreciated." };
+        private string[] PetResponses = new[] { "thanks", "ok", @"tyvm \<3", @"ありがと！" };
         private string[] EightBallResponses = new[] { "It is certain.", "Ask again later.", "Most likely.", "Very doubtful.", "Reply hazy try again.", "Outlook good.", "You may rely on it.",
             "My reply is no.", "Cannot predict now.", "My sources say no.", "Yes.", "As I see it, yes.", "Without a doubt.", "Better not tell you now.", "Don't count on it.",
             "Concentrate and ask again.", "Outlook not so good.", "Yes, definitely."};
         private Random rng = new Random();
+        private HttpClient client = new HttpClient();
         [Command("dice")]
         [Description("Rolls a dice.")]
         [Aliases("roll")]
@@ -52,25 +53,7 @@ namespace Kasumi.Commands
         [Description("Pets Kasumi.")]
         public async Task Pet(CommandContext ctx)
         {
-            Happiness.IncrementHappiness(ctx.User.Id, rng.Next(0, 5));
-            switch (Happiness.GetHappinessLevel(ctx.User.Id))
-            {
-                case Entities.HappinessLevel.Dispise:
-                    await ctx.RespondAsync("Fuck off!");
-                    return;
-                case Entities.HappinessLevel.Hate:
-                    await ctx.RespondAsync("Ehh.");
-                    return;
-                case Entities.HappinessLevel.Like:
-                    await ctx.RespondAsync("Thanks!");
-                    return;
-                case Entities.HappinessLevel.Love:
-                    await ctx.RespondAsync("<3");
-                    return;
-                case Entities.HappinessLevel.Neutral:
-                    await ctx.RespondAsync("Thank you.");
-                    return;
-            }
+            await ctx.RespondAsync(PetResponses[rng.Next(PetResponses.Length)]);
         }
         
         [Command("8ball")]
@@ -88,7 +71,6 @@ namespace Kasumi.Commands
                 await ctx.RespondAsync("Invalid mode specified.");
                 return;
             }
-            HttpClient client = new HttpClient();
             string url = $"https://osu.ppy.sh/api/get_user?k={Globals.OsuKey}&u={user}&m={mode}";
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Get, url);
             HttpResponseMessage resp = await client.SendAsync(req);
@@ -149,6 +131,18 @@ namespace Kasumi.Commands
             DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DSharpPlus.Permissions.None, new DiscordColor(colour), false, false, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
             await ctx.Member.GrantRoleAsync(rr, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
             await ctx.RespondAsync("Updated your roles!");
+        }
+        [Command("mac")]
+        [Description("Looks up a MAC address using the MACVendors API.")]
+        public async Task Mac(CommandContext ctx, string address)
+        {
+            if(!Regex.IsMatch(address, @"^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$"))
+            {
+                await ctx.RespondAsync("That's not a valid MAC address");
+                return;
+            }
+            string vendor = await client.GetStringAsync("http://api.macvendors.com/" + address.Replace(':', '-'));
+            await ctx.RespondAsync(vendor);
         }
         private async Task RemoveKasumiRoles(DiscordMember m)
         {
