@@ -3,6 +3,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Kasumi.Economy;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Kasumi.Commands
 {
@@ -97,7 +98,26 @@ namespace Kasumi.Commands
                 return;
             }
             Bank.FineUser(user.Id, amount);
-            await ctx.RespondAsync($"Fined {user.Username} O${amount.ToString()}");
+            await ctx.RespondAsync($"Fined {user.Username} ${amount.ToString()}");
+        }
+        [Command("collect")]
+        [Description("Collects your payout based on the amount of messages sent.")]
+        [Aliases("payout")]
+        public async Task Collect(CommandContext ctx)
+        {
+            using(var db = new BankContext())
+            {
+                decimal cock = db.Accounts.Single(b => b.Id == ctx.User.Id.ToString()).CollectBalance;
+                if(cock <= 0)
+                {
+                    await ctx.RespondAsync("You don't have any money to collect.");
+                    return;
+                }
+                db.Accounts.Single(b => b.Id == ctx.User.Id.ToString()).Balance += cock;
+                db.Accounts.Single(b => b.Id == ctx.User.Id.ToString()).CollectBalance = 0;
+                await db.SaveChangesAsync();
+                await ctx.RespondAsync($"You collected ${cock}.");
+            }
         }
     }
 }

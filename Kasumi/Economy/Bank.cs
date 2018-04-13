@@ -71,6 +71,11 @@ namespace Kasumi.Economy
                 return db.Accounts.Count(b => b.Id == id) == 1;
             }
         }
+        /// <summary>
+        /// Fines a user a certain amount of money
+        /// </summary>
+        /// <param name="id">User ID</param>
+        /// <param name="amount">Amount to fine</param>
         public static void FineUser(ulong id, decimal amount)
         {
             using(var db = new BankContext())
@@ -79,5 +84,19 @@ namespace Kasumi.Economy
                 db.SaveChanges();
             }
         }
+        /// <summary>
+        /// Adds an amount of money for the user to collect
+        /// </summary>
+        /// <param name="id">user id</param>
+        /// <param name="amount">amount to add</param>
+        public static void AddMessagePayout(ulong id, decimal amount)
+        {
+            using(var db = new BankContext())
+            {
+                db.Accounts.Single(b => b.Id == id.ToString()).CollectBalance += amount;
+                db.SaveChanges();
+            }
+        }
+        
     }
 }

@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Kasumi.Migrations
 {
@@ -13,7 +13,8 @@ namespace Kasumi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    Balance = table.Column<decimal>(nullable: false)
+                    Balance = table.Column<decimal>(nullable: false),
+                    CollectBalance = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -25,10 +26,10 @@ namespace Kasumi.Migrations
                 columns: table => new
                 {
                     FromId = table.Column<string>(nullable: false),
+                    ToId = table.Column<string>(nullable: true),
                     Amount = table.Column<decimal>(nullable: false),
-                    BankAccountId = table.Column<string>(nullable: true),
                     Timestamp = table.Column<DateTime>(nullable: false),
-                    ToId = table.Column<string>(nullable: true)
+                    BankAccountId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

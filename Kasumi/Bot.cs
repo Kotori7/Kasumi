@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Kasumi.Commands;
 using System.Threading.Tasks;
 using DSharpPlus;
-using DSharpPlus.Entities;
+using Kasumi.Economy;
 using DSharpPlus.Exceptions;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.VoiceNext;
@@ -33,6 +33,7 @@ namespace Kasumi
             Client.Ready += Client_Ready;
             Client.GuildAvailable += Client_GuildAvailable;
             Client.ClientErrored += Client_ClientErrored;
+            Client.MessageCreated += Client_MessageCreated;
             // CommandsNext Configuration
             var cfg2 = new CommandsNextConfiguration
             {
@@ -60,6 +61,17 @@ namespace Kasumi
             await Task.Delay(-1);
         }
 
+        private static Task Client_MessageCreated(DSharpPlus.EventArgs.MessageCreateEventArgs e)
+        {
+            if (!Bank.CheckExistance(e.Author.Id.ToString()))
+            {
+                Bank.CreateAccount(e.Author.Id.ToString());
+                return Task.CompletedTask;
+            }
+            decimal f = rng.Next(5);
+            Bank.AddMessagePayout(e.Author.Id, f);
+            return Task.CompletedTask;
+        }
 
         private static Task Client_ClientErrored(DSharpPlus.EventArgs.ClientErrorEventArgs e)
         {
