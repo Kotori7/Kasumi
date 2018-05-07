@@ -65,7 +65,12 @@ namespace Kasumi
 
         private static async Task Commands_CommandErrored(CommandErrorEventArgs e)
         {
-            await e.Context.Channel.SendMessageAsync("Error: \n ```" + e.Exception + "```");
+            if (e.Exception.GetType().Name == "ChecksFailedException")
+            {
+                await e.Context.Channel.SendMessageAsync("You can't run that command here.");
+                return;
+            }
+            await e.Context.Channel.SendMessageAsync($"There was a problem running that command, and a {e.Exception.GetType().Name} occured.\n More info: ```{e.Exception.Message}```");
         }
 
         private static Task Client_MessageCreated(DSharpPlus.EventArgs.MessageCreateEventArgs e)
