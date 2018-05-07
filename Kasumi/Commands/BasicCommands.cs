@@ -61,7 +61,7 @@ namespace Kasumi.Commands
         {
             DiscordEmbedBuilder embedBuilder = new DiscordEmbedBuilder();
             embedBuilder.AddField("System Version", Environment.OSVersion.VersionString);
-            embedBuilder.AddField("Architecture", Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE"), true);
+            embedBuilder.AddField("Architecture", System.Runtime.InteropServices.RuntimeInformation.OSArchitecture.ToString(), true);
             embedBuilder.AddField("RAM Usage", (Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024).ToString() + "MB", true);
             embedBuilder.AddField("Bot Version", System.IO.File.ReadAllText("version"));
             await ctx.RespondAsync(embed: embedBuilder.Build());

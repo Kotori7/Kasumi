@@ -144,6 +144,35 @@ namespace Kasumi.Commands
             string vendor = await client.GetStringAsync("http://api.macvendors.com/" + address.Replace(':', '-'));
             await ctx.RespondAsync(vendor);
         }
+        [Command("setcolour")]
+        [Description("Sets someone elses colour.")]
+        [RequirePermissions(DSharpPlus.Permissions.ManageRoles)]
+        public async Task SetColour(CommandContext ctx, DiscordMember member, string colour)
+        {
+            if (!Regex.IsMatch(colour, @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))
+            {
+                await ctx.RespondAsync("Invalid hex code.");
+                return;
+            }
+            foreach (DiscordRole r in ctx.Member.Roles)
+            {
+                if (r.Name.StartsWith("kasumi"))
+                {
+                    await member.RevokeRoleAsync(r);
+                }
+            }
+            foreach (DiscordRole r in ctx.Guild.Roles)
+            {
+                if (r.Name == "kasumi" + colour)
+                {
+                    await member.GrantRoleAsync(r);
+                    return;
+                }
+            }
+            DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DSharpPlus.Permissions.None, new DiscordColor(colour), false, false, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
+            await member.GrantRoleAsync(rr, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
+            await ctx.RespondAsync("Updated your roles!");
+        }
         private async Task RemoveKasumiRoles(DiscordMember m)
         {
             foreach(DiscordRole r in m.Roles)

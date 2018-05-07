@@ -34,6 +34,7 @@ namespace Kasumi
             Client.GuildAvailable += Client_GuildAvailable;
             Client.ClientErrored += Client_ClientErrored;
             Client.MessageCreated += Client_MessageCreated;
+            
             // CommandsNext Configuration
             var cfg2 = new CommandsNextConfiguration
             {
@@ -56,9 +57,15 @@ namespace Kasumi
             Commands.RegisterCommands<HashingCommands>();
             Commands.RegisterCommands<ModerationCommands>();
             Commands.RegisterCommands<BankCommands>();
+            Commands.CommandErrored += Commands_CommandErrored; // this needs to be here otherwise it fucking nullrefs
             Globals.StartTime = DateTime.Now;
             await Client.ConnectAsync();
             await Task.Delay(-1);
+        }
+
+        private static async Task Commands_CommandErrored(CommandErrorEventArgs e)
+        {
+            await e.Context.Channel.SendMessageAsync("Error: \n ```" + e.Exception + "```");
         }
 
         private static Task Client_MessageCreated(DSharpPlus.EventArgs.MessageCreateEventArgs e)

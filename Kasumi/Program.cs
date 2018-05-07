@@ -3,13 +3,14 @@ using System.IO;
 using Newtonsoft.Json;
 using Kasumi.Entities;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Kasumi
 {
     class Program
     {
         // Bootstrap for checking the runtime environment and initializing the main bot procedure.
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             // Check that config.json exists, we need it.
             if (!File.Exists("config.json"))
@@ -28,7 +29,7 @@ namespace Kasumi
             Globals.Prefix = config.Prefix;
             Globals.OsuKey = config.OsuKey;
             // Run the actual bot.
-            Bot.BotMain().GetAwaiter().GetResult();
+            await Bot.BotMain();
             // Exit with the bot's exit code
             Environment.Exit(Globals.ExitCode);
         }
