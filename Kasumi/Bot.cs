@@ -70,6 +70,7 @@ namespace Kasumi
                 await e.Context.Channel.SendMessageAsync("You can't run that command here.");
                 return;
             }
+            if (e.Exception.GetType().Name == "CommandNotFoundException") return;
             await e.Context.Channel.SendMessageAsync($"There was a problem running that command, and a {e.Exception.GetType().Name} occured.\n More info: ```{e.Exception.Message}```");
         }
 
