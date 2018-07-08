@@ -60,7 +60,7 @@ namespace Kasumi.Commands
         [Description("Asks the 8 ball a question.")]
         public async Task EightBall(CommandContext ctx, [Description("Question to ask.")] params string[] query)
         {
-            await ctx.RespondAsync(":8ball: | " + EightBallResponses[rng.Next(20)]);
+            await ctx.RespondAsync(":8ball: | " + EightBallResponses[rng.Next(EightBallResponses.Length)]);
         }
         [Command("osu")]
         [Description("Retrieves a user's osu! stats.")]
