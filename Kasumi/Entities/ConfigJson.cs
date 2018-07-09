@@ -10,5 +10,7 @@ namespace Kasumi.Entities
         public string Prefix { get; private set; }
         [JsonProperty("osu_key")]
         public string OsuKey { get; private set; }
+        [JsonProperty("ai_key")]
+        public string AIKey { get; set; }
     }
 }

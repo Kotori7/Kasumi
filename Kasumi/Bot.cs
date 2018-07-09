@@ -7,6 +7,7 @@ using Kasumi.Economy;
 using DSharpPlus.Exceptions;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.VoiceNext;
+using Microsoft.ApplicationInsights;
 
 namespace Kasumi
 {
@@ -15,6 +16,7 @@ namespace Kasumi
         public static DiscordClient Client { get; set; }
         public static CommandsNextExtension Commands { get; set; }
         public static VoiceNextExtension Voice { get; set; }
+        public static TelemetryClient TelemetryClient = new TelemetryClient(); // """""datamining"""""
         private static Random rng = new Random();
         public static async Task BotMain()
         {
@@ -47,6 +49,7 @@ namespace Kasumi
                 VoiceApplication = DSharpPlus.VoiceNext.Codec.VoiceApplication.Music
             };
             Voice = Client.UseVoiceNext(cfg3);
+            TelemetryClient.InstrumentationKey = Globals.AIKey;
             Commands = Client.UseCommandsNext(cfg2);
             Commands.RegisterCommands<BasicCommands>();
             Commands.RegisterCommands<InfoCommands>();
@@ -58,9 +61,16 @@ namespace Kasumi
             Commands.RegisterCommands<ModerationCommands>();
             Commands.RegisterCommands<BankCommands>();
             Commands.CommandErrored += Commands_CommandErrored; // this needs to be here otherwise it fucking nullrefs
+            Commands.CommandExecuted += Commands_CommandExecuted;
             Globals.StartTime = DateTime.Now;
             await Client.ConnectAsync();
             await Task.Delay(-1);
+        }
+
+        private static Task Commands_CommandExecuted(CommandExecutionEventArgs e)
+        {
+            TelemetryClient.TrackEvent("Command Run: " + e.Command.Name);
+            return Task.CompletedTask;
         }
 
         private static async Task Commands_CommandErrored(CommandErrorEventArgs e)
@@ -72,6 +82,7 @@ namespace Kasumi
             }
             if (e.Exception.GetType().Name == "CommandNotFoundException") return;
             await e.Context.Channel.SendMessageAsync($"There was a problem running that command, and a {e.Exception.GetType().Name} occured.\n More info: ```{e.Exception.Message}```");
+            TelemetryClient.TrackException(e.Exception);
         }
 
         private static Task Client_MessageCreated(DSharpPlus.EventArgs.MessageCreateEventArgs e)
@@ -89,6 +100,7 @@ namespace Kasumi
         private static Task Client_ClientErrored(DSharpPlus.EventArgs.ClientErrorEventArgs e)
         {
             e.Client.DebugLogger.LogMessage(LogLevel.Error, "Kasumi", $"Client error: {e.Exception.Message}", DateTime.Now);
+            TelemetryClient.TrackException(e.Exception);
             return Task.CompletedTask;
         }
 

@@ -53,6 +53,7 @@ namespace Kasumi.Commands
         {
             await ctx.RespondAsync("Farewell!");
             await ctx.Client.DisconnectAsync();
+            Bot.TelemetryClient.Flush();
             Environment.Exit(0);
         }
         [Command("info")]

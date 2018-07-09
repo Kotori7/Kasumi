@@ -28,6 +28,7 @@ namespace Kasumi
             Globals.Token = config.Token;
             Globals.Prefix = config.Prefix;
             Globals.OsuKey = config.OsuKey;
+            Globals.AIKey = config.AIKey;
             // Run the actual bot.
             await Bot.BotMain();
             // Exit with the bot's exit code
