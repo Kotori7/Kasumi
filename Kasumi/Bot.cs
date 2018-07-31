@@ -56,7 +56,7 @@ namespace Kasumi
             Commands.RegisterCommands<FunCommands>();
             //Commands.RegisterCommands<ImageCommands>();
             Commands.RegisterCommands<NsfwCommands>();
-            //Commands.RegisterCommands<ImageAnalysisCommand>();
+            //Commands.RegisterCommands<MusicCommands>();
             Commands.RegisterCommands<HashingCommands>();
             Commands.RegisterCommands<ModerationCommands>();
             Commands.RegisterCommands<BankCommands>();
