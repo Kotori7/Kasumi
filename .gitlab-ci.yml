@@ -1,13 +1,8 @@
+image: microsoft/dotnet:latest
+
 before_script:
-   - apt-get update -qq
-   - apt-get install apt-transport-https -qq
-   - wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
-   - dpkg -i packages-microsoft-prod.deb
-   - apt-get update -qq
-   - apt-get install dotnet-sdk-2.1
-   - dotnet --version
+  - dotnet restore -s https://www.myget.org/F/dsharpplus-nightly/api/v3/index.json -s https://api.nuget.org/v3/index.json
 
 build:
   script:
-    - dotnet restore -s https://www.myget.org/F/dsharpplus-nightly/api/v3/index.json -s https://api.nuget.org/v3/index.json
     - dotnet build /verbosity:normal /m
