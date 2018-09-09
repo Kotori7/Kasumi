@@ -61,6 +61,7 @@ namespace Kasumi
             Commands.RegisterCommands<ModerationCommands>();
             Commands.RegisterCommands<BankCommands>();
             Commands.RegisterCommands<ColourCommands>();
+            Commands.RegisterCommands<AnimeCommands>();
             Commands.CommandErrored += Commands_CommandErrored; // this needs to be here otherwise it fucking nullrefs
             Commands.CommandExecuted += Commands_CommandExecuted;
             Globals.StartTime = DateTime.Now;
