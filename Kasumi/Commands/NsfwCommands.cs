@@ -9,7 +9,7 @@ namespace Kasumi.Commands
 {
     [Description("You know, those 18+ commands. Those ones.")]
     [RequireNsfw]
-    public class NsfwCommands
+    public class NsfwCommands : BaseCommandModule
     {
         private HttpClient client = new HttpClient();
         [Command("danbooru")]

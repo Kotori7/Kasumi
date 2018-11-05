@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Kasumi.Commands
 {
-    public class HashingCommands
+    public class HashingCommands : BaseCommandModule
     {
         private MD5 md5hash = MD5.Create();
         private SHA1 sha1hash = SHA1.Create();

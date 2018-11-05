@@ -11,7 +11,8 @@ using Newtonsoft.Json.Linq;
 namespace Kasumi.Commands
 {
     [Description("fun commands")]
-    public class FunCommands
+    
+    public class FunCommands : BaseCommandModule
     {
         private string[] PetResponses = new[] { "thanks", "ok", @"tyvm \<3", @"ありがと！" };
         private string[] EightBallResponses = new[] { "It is certain.", "Ask again later.", "Most likely.", "Very doubtful.", "Reply hazy try again.", "Outlook good.", "You may rely on it.",
@@ -43,11 +44,15 @@ namespace Kasumi.Commands
                 return;
             }
             string result = $"{ctx.User.Username} rolled {ok} and got ";
+            int total = 0;
             for (int i = 0; i < dice; i++)
             {
-                result += rng.Next(1, max) + " ";
+                int roll = rng.Next(1, max);
+                total += roll;
+                if (i == dice - 1) result += $"{roll}";
+                else result += $"{roll}, ";
             }
-            await ctx.RespondAsync(result + ".");
+            await ctx.RespondAsync($"{result} [{total}].");
         }
         [Command("pet")]
         [Description("Pets Kasumi.")]

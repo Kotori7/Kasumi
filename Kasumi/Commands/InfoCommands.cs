@@ -11,7 +11,7 @@ using DSharpPlus.Entities;
 namespace Kasumi.Commands
 {
     [Description("info commands")]
-    public class InfoCommands
+    public class InfoCommands : BaseCommandModule
     {
         [Command("guildinfo")]
         [Description("Shows information about the current guild.")]

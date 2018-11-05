@@ -10,7 +10,7 @@ using DSharpPlus.Entities;
 namespace Kasumi.Commands
 {
     [Description("Basic commands.")]
-    public class BasicCommands
+    public class BasicCommands : BaseCommandModule
     {
         [Command("echo")]
         [Description("Echo command. Self-explanitory.")]

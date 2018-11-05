@@ -11,7 +11,7 @@ using DSharpPlus.Entities;
 
 namespace Kasumi.Commands
 {
-    public class AnimeCommands
+    public class AnimeCommands : BaseCommandModule
     {
         private static HttpClient http = new HttpClient();
         [Command("anime")]

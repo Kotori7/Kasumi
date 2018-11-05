@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Kasumi.Commands
 {
-    public class ModerationCommands
+    public class ModerationCommands : BaseCommandModule
     {
         [Command("ban")]
         [Description("Bans a user.")]

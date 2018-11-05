@@ -9,7 +9,7 @@ using DSharpPlus.Entities;
 
 namespace Kasumi.Commands
 {
-    public class MusicCommands
+    public class MusicCommands : BaseCommandModule
     {
         [Command("join")]
         [Description("Joins the voice channel you are currently in")]

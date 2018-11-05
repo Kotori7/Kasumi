@@ -9,7 +9,7 @@ using System.Linq;
 namespace Kasumi.Commands
 {
     [Description("colour commands")]
-    public class ColourCommands
+    public class ColourCommands : BaseCommandModule
     {
         [Command("colour")]
         [RequireBotPermissions(DSharpPlus.Permissions.ManageRoles)]

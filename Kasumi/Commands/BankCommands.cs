@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Kasumi.Commands
 {
-    public class BankCommands
+    public class BankCommands : BaseCommandModule
     {
         [Command("balance")]
         [Description("Gets the balance for your account.")]
