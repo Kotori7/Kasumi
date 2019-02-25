@@ -63,11 +63,12 @@ namespace Kasumi.Commands
                 await ctx.RespondAsync("That user doesn't have a bank account.");
                 return;
             }
-            if(!(Bank.GetBalance(ctx.User.Id.ToString()) >= amount)){
+            if (!(Bank.GetBalance(ctx.User.Id.ToString()) >= amount))
+            {
                 await ctx.RespondAsync("You don't have enough funds.");
                 return;
             }
-            if(amount < 0)
+            if (amount < 0)
             {
                 await ctx.RespondAsync("Stealing money is highly illegal.");
                 return;
@@ -80,7 +81,8 @@ namespace Kasumi.Commands
         [RequireOwner]
         public async Task SetBalance(CommandContext ctx, DiscordUser user, decimal amount)
         {
-            if (!Bank.CheckExistance(user.Id.ToString())){
+            if (!Bank.CheckExistance(user.Id.ToString()))
+            {
                 await ctx.RespondAsync("That user doesn't have a bank account.");
                 return;
             }
@@ -105,10 +107,10 @@ namespace Kasumi.Commands
         [Aliases("payout")]
         public async Task Collect(CommandContext ctx)
         {
-            using(var db = new BankContext())
+            using (var db = new BankContext())
             {
                 decimal cock = db.Accounts.Single(b => b.Id == ctx.User.Id.ToString()).CollectBalance;
-                if(cock <= 0)
+                if (cock <= 0)
                 {
                     await ctx.RespondAsync("You don't have any money to collect.");
                     return;

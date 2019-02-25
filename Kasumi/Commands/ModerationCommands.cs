@@ -15,5 +15,18 @@ namespace Kasumi.Commands
             await ctx.Guild.BanMemberAsync(mem, 0, $"[Ban by {ctx.User.Username}#{ctx.User.Discriminator}] {reason}");
             await ctx.RespondAsync($"{mem.Username}#{mem.Discriminator} got bent");
         }
+        [Command("nuke")]
+        [Description("Nukes a specified amount of messages from the channel.")]
+        [Aliases(new [] { "purge", "massdel"})]
+        [RequirePermissions(DSharpPlus.Permissions.ManageMessages)]
+        public async Task Nuke(CommandContext ctx, [Description("The amount of messages to delete")] int amount)
+        {
+            await ctx.Message.DeleteAsync($"Message nuke called by {ctx.User.Username}#{ctx.User.Discriminator}");
+            System.Collections.Generic.IReadOnlyList<DiscordMessage> messages = await ctx.Channel.GetMessagesAsync(amount);
+            foreach(DiscordMessage m in messages)
+            {
+                await m.DeleteAsync($"Message nuke called by {ctx.User.Username}#{ctx.User.Discriminator}");
+            }
+        }
     }
 }
