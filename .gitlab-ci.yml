@@ -1,8 +1,0 @@
-image: microsoft/dotnet:latest
-
-before_script:
-  - dotnet restore -s https://www.myget.org/F/dsharpplus-nightly/api/v3/index.json -s https://api.nuget.org/v3/index.json
-
-build:
-  script:
-    - dotnet build /verbosity:normal /m
