@@ -55,13 +55,13 @@ namespace Kasumi
             Commands.RegisterCommands<InfoCommands>();
             Commands.RegisterCommands<FunCommands>();
             Commands.RegisterCommands<NsfwCommands>();
-            //Commands.RegisterCommands<MusicCommands>();
+            Commands.RegisterCommands<RoleCommands>();
             Commands.RegisterCommands<HashingCommands>();
             Commands.RegisterCommands<ModerationCommands>();
             Commands.RegisterCommands<BankCommands>();
             Commands.RegisterCommands<ColourCommands>();
             Commands.RegisterCommands<AnimeCommands>();
-            Commands.CommandErrored += Commands_CommandErrored; // this needs to be here otherwise it fucking nullrefs
+            Commands.CommandErrored += Commands_CommandErrored;
             Commands.CommandExecuted += Commands_CommandExecuted;
             Globals.StartTime = DateTime.Now;
             await Client.ConnectAsync();
