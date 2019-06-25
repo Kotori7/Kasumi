@@ -44,8 +44,11 @@ namespace Kasumi.Commands
                     await ctx.Member.GrantRoleAsync(r);
                     return;
                 }
-                if (ctx.Guild.Members.Count(m => m.Roles.Any(p => p == r)) == 0)
-                    await r.DeleteAsync();
+                if (r.Name.StartsWith("kasumi#"))
+                {
+                    if (ctx.Guild.Members.Count(m => m.Roles.Any(p => p == r)) == 0)
+                        await r.DeleteAsync();
+                }
             }
             DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DSharpPlus.Permissions.None, new DiscordColor(colour), false, false, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
             await ctx.Member.GrantRoleAsync(rr, "[Kasumi] Colour role for " + ctx.User.Username + "#" + ctx.User.Discriminator);
@@ -75,8 +78,11 @@ namespace Kasumi.Commands
                     await member.GrantRoleAsync(r);
                     return;
                 }
-                if (ctx.Guild.Members.Count(m => m.Roles.Any(p => p == r)) == 0)
-                    await r.DeleteAsync();
+                if (r.Name.StartsWith("kasumi#"))
+                {
+                    if (ctx.Guild.Members.Count(m => m.Roles.Any(p => p == r)) == 0)
+                        await r.DeleteAsync();
+                }
             }
             DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DSharpPlus.Permissions.None, new DiscordColor(colour), false, false, "[Kasumi] Colour role override for " + member.Username + "#" + member.Discriminator);
             await member.GrantRoleAsync(rr, "[Kasumi] Colour role override for " + member.Username + "#" + member.Discriminator);
