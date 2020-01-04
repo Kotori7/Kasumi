@@ -37,7 +37,7 @@ namespace Kasumi.Commands
                     await ctx.Member.RevokeRoleAsync(r);
                 }
             }
-            foreach (DiscordRole r in ctx.Guild.Roles.ToArray())
+            foreach (DiscordRole r in ctx.Guild.Roles.Values)
             {
                 if (r.Name == "kasumi" + colour)
                 {
@@ -46,7 +46,7 @@ namespace Kasumi.Commands
                 }
                 if (r.Name.StartsWith("kasumi#"))
                 {
-                    if (ctx.Guild.Members.Count(m => m.Roles.Any(p => p == r)) == 0)
+                    if (ctx.Guild.Members.Count(m => m.Value.Roles.Any(p => p == r)) == 0)
                         await r.DeleteAsync();
                 }
             }
@@ -71,7 +71,7 @@ namespace Kasumi.Commands
                     await member.RevokeRoleAsync(r);
                 }
             }
-            foreach (DiscordRole r in ctx.Guild.Roles.ToArray())
+            foreach (DiscordRole r in ctx.Guild.Roles.Values)
             {
                 if (r.Name == "kasumi" + colour)
                 {
@@ -80,7 +80,7 @@ namespace Kasumi.Commands
                 }
                 if (r.Name.StartsWith("kasumi#"))
                 {
-                    if (ctx.Guild.Members.Count(m => m.Roles.Any(p => p == r)) == 0)
+                    if (ctx.Guild.Members.Count(m => m.Value.Roles.Any(p => p == r)) == 0)
                         await r.DeleteAsync();
                 }
             }
@@ -95,11 +95,11 @@ namespace Kasumi.Commands
         {
             int count = 0;
             await ctx.RespondAsync("Starting role cleanup, may take a while...");
-            foreach (DiscordRole r in ctx.Guild.Roles.ToArray())
+            foreach (DiscordRole r in ctx.Guild.Roles.Values)
             {
                 if (r.Name.StartsWith("kasumi#"))
                 {
-                    if (ctx.Guild.Members.Count(m => m.Roles.Any(p => p == r)) == 0)
+                    if (ctx.Guild.Members.Count(m => m.Value.Roles.Any(p => p == r)) == 0)
                     {
                         await r.DeleteAsync();
                         count++;

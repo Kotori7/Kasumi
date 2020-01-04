@@ -9,6 +9,8 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.VoiceNext;
 using Microsoft.ApplicationInsights;
 
+#pragma warning disable CS0618
+
 namespace Kasumi
 {
     public class Bot
@@ -44,11 +46,11 @@ namespace Kasumi
                 EnableDms = true,
                 StringPrefixes = new List<string>{ Globals.Prefix }
             };
-            var cfg3 = new VoiceNextConfiguration
-            {
-                VoiceApplication = DSharpPlus.VoiceNext.Codec.VoiceApplication.Music
-            };
-            Voice = Client.UseVoiceNext(cfg3);
+            //var cfg3 = new VoiceNextConfiguration
+            //{
+            //    VoiceApplication = DSharpPlus.VoiceNext.Codec.VoiceApplication.Music
+            //};
+            //Voice = Client.UseVoiceNext(cfg3);
             TelemetryClient.InstrumentationKey = Globals.AIKey;
             Commands = Client.UseCommandsNext(cfg2);
             Commands.RegisterCommands<BasicCommands>();

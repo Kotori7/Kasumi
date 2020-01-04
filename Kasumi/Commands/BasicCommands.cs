@@ -13,7 +13,7 @@ namespace Kasumi.Commands
     public class BasicCommands : BaseCommandModule
     {
         [Command("echo")]
-        [Description("Echo command. Self-explanitory.")]
+        [Description("Echo command. Self-explanatory.")]
         public async Task Echo(CommandContext ctx, params string[] args)
         {
             await ctx.RespondAsync(String.Join(" ", args));
@@ -26,7 +26,7 @@ namespace Kasumi.Commands
             await ctx.RespondAsync($"Pong, {ctx.Client.Ping}ms");
         }
         [Command("uptime")]
-        [Description("Respons with the bot's uptime.")]
+        [Description("Responds with the bot's uptime.")]
         public async Task Uptime(CommandContext ctx)
         {
             StringBuilder sb = new StringBuilder();

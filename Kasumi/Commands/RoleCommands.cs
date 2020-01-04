@@ -28,7 +28,7 @@ namespace Kasumi.Commands
                     await ctx.RespondAsync("I couldn't find a role in this server by that name.");
                     return;
                 }
-                DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Id.ToString() == role.RoleId);
+                DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id.ToString() == role.RoleId).Value;
                 await ctx.Member.GrantRoleAsync(dRole, "[Kasumi] Giving user self-assignable role.");
                 await ctx.RespondAsync($"Gave you the `{dRole.Name}` role.");
             }
@@ -49,7 +49,7 @@ namespace Kasumi.Commands
                     await ctx.RespondAsync("I couldn't find a role in this server by that name.");
                     return;
                 }
-                DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Id.ToString() == role.RoleId);
+                DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id.ToString() == role.RoleId).Value;
                 if (!ctx.Member.Roles.Contains(dRole))
                 {
                     await ctx.RespondAsync("You don't seem to have that role.");
