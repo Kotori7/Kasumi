@@ -2,6 +2,6 @@ language: csharp
 mono: none
 dotnet: 2.1.101
 install:
-  - dotnet restore -s https://www.myget.org/F/dsharpplus-nightly/api/v3/index.json -s https://api.nuget.org/v3/index.json
+  - dotnet restore -s https://nuget.emzi0767.com/api/v3/index.json -s https://api.nuget.org/v3/index.json
 script:
   - dotnet build /m
