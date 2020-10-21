@@ -27,7 +27,7 @@ namespace Kasumi.Commands
             if (!colour.StartsWith('#')) colour = "#" + colour;
             if (!Regex.IsMatch(colour, @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))
             {
-                await ctx.RespondAsync("Invalid hex code.");
+                await ctx.RespondAsync("Invalid hex code or colour name.");
                 return;
             }
             foreach (DiscordRole r in ctx.Member.Roles.ToArray())
