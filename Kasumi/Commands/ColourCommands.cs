@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using DSharpPlus.CommandsNext;
@@ -8,14 +9,21 @@ using System.Linq;
 
 namespace Kasumi.Commands
 {
+
     [Description("colour commands")]
     public class ColourCommands : BaseCommandModule
     {
+
+        
         [Command("colour")]
         [RequireBotPermissions(DSharpPlus.Permissions.ManageRoles)]
         [Aliases("color")] // fuckin americans
-        public async Task Colour(CommandContext ctx, [Description("Hex code of a colour.")] string colour)
+        public async Task Colour(CommandContext ctx, [Description("Hex code or name of a colour.")] string colour)
         {
+            if (colours.ContainsKey(colour))
+            {
+                colour = colours[colour];
+            }
             if (!colour.StartsWith('#')) colour = "#" + colour;
             if (!Regex.IsMatch(colour, @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))
             {
@@ -109,5 +117,29 @@ namespace Kasumi.Commands
             }
             await ctx.RespondAsync($"Cleaned up {count} roles.");
         }
+
+        
+        #region Predefined Colours
+
+        private Dictionary<string, string> colours = new Dictionary<string, string>()
+        {
+            {"black", "#000000"},
+            {"grey", "#808080"},
+            {"white", "#ffffff"},
+            {"maroon", "#800000"},
+            {"red", "#ff0000"},
+            {"purple", "#800080"},
+            {"pink", "#ff00ff"},
+            {"green", "#008000"},
+            {"lime", "#00ff00"},
+            {"olive", "#808000"},
+            {"yellow", "#ffff00"},
+            {"navy", "#000080"},
+            {"blue", "#0000ff"},
+            {"teal", "#008080"},
+            {"aqua", "#00ffff"}
+        };
+
+        #endregion
     }
 }
