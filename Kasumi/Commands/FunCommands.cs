@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using Kasumi.Economy;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 
@@ -14,7 +13,6 @@ namespace Kasumi.Commands
     
     public class FunCommands : BaseCommandModule
     {
-        private string[] PetResponses = new[] { "thanks", "ok", @"tyvm \<3", @"ありがと！" };
         private string[] EightBallResponses = new[] { "It is certain.", "Ask again later.", "Most likely.", "Very doubtful.", "Reply hazy try again.", "Outlook good.", "You may rely on it.",
             "My reply is no.", "Cannot predict now.", "My sources say no.", "Yes.", "As I see it, yes.", "Without a doubt.", "Better not tell you now.", "Don't count on it.",
             "Concentrate and ask again.", "Outlook not so good.", "Yes, definitely."};
@@ -54,13 +52,7 @@ namespace Kasumi.Commands
             }
             await ctx.RespondAsync($"{result} [{total}].");
         }
-        [Command("pet")]
-        [Description("Pets Kasumi.")]
-        public async Task Pet(CommandContext ctx)
-        {
-            await ctx.RespondAsync(PetResponses[rng.Next(PetResponses.Length)]);
-        }
-        
+
         [Command("8ball")]
         [Description("Asks the 8 ball a question.")]
         public async Task EightBall(CommandContext ctx, [Description("Question to ask.")] params string[] query)
@@ -112,17 +104,6 @@ namespace Kasumi.Commands
             }
             string vendor = await client.GetStringAsync("http://api.macvendors.com/" + address.Replace(':', '-'));
             await ctx.RespondAsync(vendor);
-        }
-        
-        private async Task RemoveKasumiRoles(DiscordMember m)
-        {
-            foreach(DiscordRole r in m.Roles)
-            {
-                if (r.Name.StartsWith("kasumi"))
-                {
-                    await m.RevokeRoleAsync(r, "[Kasumi] Colour role cleanup.");
-                }
-            }
         }
     }
 }

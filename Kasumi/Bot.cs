@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Kasumi.Commands;
 using System.Threading.Tasks;
 using DSharpPlus;
-using Kasumi.Economy;
 using DSharpPlus.Exceptions;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.VoiceNext;
@@ -37,8 +36,7 @@ namespace Kasumi
             Client.Ready += Client_Ready;
             Client.GuildAvailable += Client_GuildAvailable;
             Client.ClientErrored += Client_ClientErrored;
-            Client.MessageCreated += Client_MessageCreated;
-            
+
             // CommandsNext Configuration
             var cfg2 = new CommandsNextConfiguration
             {
@@ -60,7 +58,6 @@ namespace Kasumi
             Commands.RegisterCommands<RoleCommands>();
             Commands.RegisterCommands<HashingCommands>();
             Commands.RegisterCommands<ModerationCommands>();
-            Commands.RegisterCommands<BankCommands>();
             Commands.RegisterCommands<ColourCommands>();
             Commands.RegisterCommands<AnimeCommands>();
             Commands.CommandErrored += Commands_CommandErrored;
@@ -86,18 +83,6 @@ namespace Kasumi
             if (e.Exception.GetType().Name == "CommandNotFoundException") return;
             await e.Context.Channel.SendMessageAsync($"There was a problem running that command, and a {e.Exception.GetType().Name} occured.\n More info: ```{e.Exception.Message}```");
             TelemetryClient.TrackException(e.Exception);
-        }
-
-        private static Task Client_MessageCreated(DSharpPlus.EventArgs.MessageCreateEventArgs e)
-        {
-            if (!Bank.CheckExistance(e.Author.Id.ToString()))
-            {
-                Bank.CreateAccount(e.Author.Id.ToString());
-                return Task.CompletedTask;
-            }
-            decimal f = rng.Next(5);
-            Bank.AddMessagePayout(e.Author.Id, f);
-            return Task.CompletedTask;
         }
 
         private static Task Client_ClientErrored(DSharpPlus.EventArgs.ClientErrorEventArgs e)
