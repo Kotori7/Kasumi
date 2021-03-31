@@ -261,4 +261,3 @@ __pycache__/
 *.pyc
 *.db
 /Kasumi/config.json
-/Kasumi/version

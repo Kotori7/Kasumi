@@ -10,16 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="4.0.0-nightly-00709" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.0.0-nightly-00709" />
-    <PackageReference Include="DSharpPlus.VoiceNext" Version="4.0.0-nightly-00709" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.15.0-beta2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0-preview.7.20365.15">
+    <PackageReference Include="DSharpPlus" Version="4.0.0-rc2" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.0.0-rc2" />
+    <PackageReference Include="DSharpPlus.VoiceNext" Version="4.0.0-rc2" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.17.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0-preview.7.20365.15" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-preview.7.20365.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.4" />
   </ItemGroup>
   
   
@@ -35,9 +35,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="git rev-parse --short HEAD &gt; version" />
-  </Target>
 
 </Project>

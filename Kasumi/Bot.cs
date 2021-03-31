@@ -7,6 +7,7 @@ using DSharpPlus.Exceptions;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.VoiceNext;
 using Microsoft.ApplicationInsights;
+using Microsoft.Extensions.Logging;
 
 #pragma warning disable CS0618
 
@@ -14,11 +15,10 @@ namespace Kasumi
 {
     public class Bot
     {
-        public static DiscordClient Client { get; set; }
-        public static CommandsNextExtension Commands { get; set; }
+        private static DiscordClient Client { get; set; }
+        private static CommandsNextExtension Commands { get; set; }
         public static VoiceNextExtension Voice { get; set; }
-        public static TelemetryClient TelemetryClient = new TelemetryClient(); // """""datamining"""""
-        private static Random rng = new Random();
+        public static readonly TelemetryClient TelemetryClient = new(); // """""datamining"""""
         public static async Task BotMain()
         {
             // Discord Client Configuration
@@ -26,10 +26,7 @@ namespace Kasumi
             {
                 Token = Globals.Token,
                 TokenType = TokenType.Bot,
-                AutoReconnect = true,
-                //LogLevel = LogLevel.Debug,
-                LogLevel = LogLevel.Info,
-                UseInternalLogHandler = true
+                AutoReconnect = true
             };
             Client = new DiscordClient(cfg);
             // Events
@@ -67,13 +64,13 @@ namespace Kasumi
             await Task.Delay(-1);
         }
 
-        private static Task Commands_CommandExecuted(CommandExecutionEventArgs e)
+        private static Task Commands_CommandExecuted(CommandsNextExtension cne, CommandExecutionEventArgs e)
         {
             TelemetryClient.TrackEvent("Command Run: " + e.Command.Name);
             return Task.CompletedTask;
         }
 
-        private static async Task Commands_CommandErrored(CommandErrorEventArgs e)
+        private static async Task Commands_CommandErrored(CommandsNextExtension cne, CommandErrorEventArgs e)
         {
             if (e.Exception.GetType().Name == "ChecksFailedException")
             {
@@ -85,22 +82,22 @@ namespace Kasumi
             TelemetryClient.TrackException(e.Exception);
         }
 
-        private static Task Client_ClientErrored(DSharpPlus.EventArgs.ClientErrorEventArgs e)
+        private static Task Client_ClientErrored(DiscordClient client, DSharpPlus.EventArgs.ClientErrorEventArgs e)
         {
-            e.Client.DebugLogger.LogMessage(LogLevel.Error, "Kasumi", $"Client error: {e.Exception.Message}", DateTime.Now);
+            Console.WriteLine($"Client error: {e.Exception.Message}");
             TelemetryClient.TrackException(e.Exception);
             return Task.CompletedTask;
         }
 
-        private static Task Client_GuildAvailable(DSharpPlus.EventArgs.GuildCreateEventArgs e)
+        private static Task Client_GuildAvailable(DiscordClient client, DSharpPlus.EventArgs.GuildCreateEventArgs e)
         {
-            e.Client.DebugLogger.LogMessage(LogLevel.Info, "Kasumi", $"Guild available: {e.Guild.Name}", DateTime.Now);
+            Console.WriteLine($"Guild available: {e.Guild.Name}");
             return Task.CompletedTask;
         }
 
-        private static Task Client_Ready(DSharpPlus.EventArgs.ReadyEventArgs e)
+        private static Task Client_Ready(DiscordClient client, DSharpPlus.EventArgs.ReadyEventArgs e)
         {
-            e.Client.DebugLogger.LogMessage(LogLevel.Info, "Kasumi", "Client ready!", DateTime.Now);
+            Console.WriteLine("Client ready!");
             return Task.CompletedTask;
         }
     }
