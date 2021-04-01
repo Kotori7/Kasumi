@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Kasumi.Commands;
 using System.Threading.Tasks;
 using DSharpPlus;
-using DSharpPlus.Exceptions;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.VoiceNext;
 using Microsoft.ApplicationInsights;
@@ -13,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Kasumi
 {
-    public class Bot
+    public static class Bot
     {
         private static DiscordClient Client { get; set; }
         private static CommandsNextExtension Commands { get; set; }
@@ -46,7 +45,7 @@ namespace Kasumi
             //    VoiceApplication = DSharpPlus.VoiceNext.Codec.VoiceApplication.Music
             //};
             //Voice = Client.UseVoiceNext(cfg3);
-            TelemetryClient.InstrumentationKey = Globals.AIKey;
+            TelemetryClient.InstrumentationKey = Globals.AiKey;
             Commands = Client.UseCommandsNext(cfg2);
             Commands.RegisterCommands<BasicCommands>();
             Commands.RegisterCommands<InfoCommands>();
@@ -66,7 +65,7 @@ namespace Kasumi
 
         private static Task Commands_CommandExecuted(CommandsNextExtension cne, CommandExecutionEventArgs e)
         {
-            TelemetryClient.TrackEvent("Command Run: " + e.Command.Name);
+            if (!Globals.Dev) TelemetryClient.TrackEvent($"Command Run: {e.Command.Name}");
             return Task.CompletedTask;
         }
 
@@ -79,25 +78,27 @@ namespace Kasumi
             }
             if (e.Exception.GetType().Name == "CommandNotFoundException") return;
             await e.Context.Channel.SendMessageAsync($"There was a problem running that command, and a {e.Exception.GetType().Name} occured.\n More info: ```{e.Exception.Message}```");
-            TelemetryClient.TrackException(e.Exception);
+            cne.Client.Logger.Log(LogLevel.Error, new EventId(704, "CommandError"),
+                $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nDetails: {e.Exception.Message}");
+            if (!Globals.Dev) TelemetryClient.TrackException(e.Exception);
         }
 
         private static Task Client_ClientErrored(DiscordClient client, DSharpPlus.EventArgs.ClientErrorEventArgs e)
         {
-            Console.WriteLine($"Client error: {e.Exception.Message}");
-            TelemetryClient.TrackException(e.Exception);
+            client.Logger.Log(LogLevel.Error, new EventId(703, "ClientError"), $"Client error: {e.Exception.Message}");
+            if (!Globals.Dev) TelemetryClient.TrackException(e.Exception);
             return Task.CompletedTask;
         }
 
         private static Task Client_GuildAvailable(DiscordClient client, DSharpPlus.EventArgs.GuildCreateEventArgs e)
         {
-            Console.WriteLine($"Guild available: {e.Guild.Name}");
+            client.Logger.Log(LogLevel.Information, new EventId(701, "GuildAvailable"), $"Guild available: {e.Guild.Name}");
             return Task.CompletedTask;
         }
 
         private static Task Client_Ready(DiscordClient client, DSharpPlus.EventArgs.ReadyEventArgs e)
         {
-            Console.WriteLine("Client ready!");
+            client.Logger.Log(LogLevel.Information, new EventId(700, "ClientReady"), "Client ready!");
             return Task.CompletedTask;
         }
     }

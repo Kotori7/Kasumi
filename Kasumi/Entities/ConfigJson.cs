@@ -11,6 +11,8 @@ namespace Kasumi.Entities
         [JsonProperty("osu_key")]
         public string OsuKey { get; private set; }
         [JsonProperty("ai_key")]
-        public string AIKey { get; set; }
+        public string AiKey { get; private set; }
+        [JsonProperty("dev")]
+        public bool Dev { get; private set; }
     }
 }
