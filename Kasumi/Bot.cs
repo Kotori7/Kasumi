@@ -25,7 +25,8 @@ namespace Kasumi
             {
                 Token = Globals.Token,
                 TokenType = TokenType.Bot,
-                AutoReconnect = true
+                AutoReconnect = true,
+                Intents = DiscordIntents.All
             };
             Client = new DiscordClient(cfg);
             // Events
