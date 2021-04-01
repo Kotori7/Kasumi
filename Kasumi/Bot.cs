@@ -79,13 +79,13 @@ namespace Kasumi
             if (e.Exception.GetType().Name == "CommandNotFoundException") return;
             await e.Context.Channel.SendMessageAsync($"There was a problem running that command, and a {e.Exception.GetType().Name} occured.\n More info: ```{e.Exception.Message}```");
             cne.Client.Logger.Log(LogLevel.Error, new EventId(704, "CommandError"),
-                $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nDetails: {e.Exception.Message}");
+                $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nMessage: {e.Exception.Message}\nStacktrace: {e.Exception.StackTrace}");
             if (!Globals.Dev) TelemetryClient.TrackException(e.Exception);
         }
 
         private static Task Client_ClientErrored(DiscordClient client, DSharpPlus.EventArgs.ClientErrorEventArgs e)
         {
-            client.Logger.Log(LogLevel.Error, new EventId(703, "ClientError"), $"Client error: {e.Exception.Message}");
+            client.Logger.Log(LogLevel.Error, new EventId(703, "ClientError"), $"Client error: {e.Exception.GetType().Name}. \nMessage: {e.Exception.Message} \nStacktrace: {e.Exception.StackTrace}");
             if (!Globals.Dev) TelemetryClient.TrackException(e.Exception);
             return Task.CompletedTask;
         }
