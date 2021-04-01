@@ -99,5 +99,29 @@ namespace Kasumi.Commands
                 await ctx.RespondAsync("Removed that role successfully. It has not been taken from any users that have it, though.");
             }
         }
+
+        [Command("list")]
+        [Description("Lists all available roles in this guild")]
+        public async Task ListCommand(CommandContext ctx)
+        {
+            using (var db = new RolesContext())
+            {
+                var roles = db.AssignableRoles
+                    .Where(r => r.ServerId == ctx.Guild.Id.ToString());
+                if (!roles.Any())
+                {
+                    await ctx.RespondAsync("There are no roles available in this server.");
+                    return;
+                }
+
+                string output = "";
+                foreach (var role in roles)
+                {
+                    output += $"`{role.Name}` ";
+                }
+
+                await ctx.RespondAsync($"Available roles: {output}");
+            }
+        }
     }
 }
