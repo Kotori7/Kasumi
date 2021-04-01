@@ -28,9 +28,19 @@ namespace Kasumi.Commands
                     await ctx.RespondAsync("I couldn't find a role in this server by that name.");
                     return;
                 }
-                DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id.ToString() == role.RoleId).Value;
-                await ctx.Member.GrantRoleAsync(dRole, "[Kasumi] Giving user self-assignable role.");
-                await ctx.RespondAsync($"Gave you the `{dRole.Name}` role.");
+
+                try
+                {
+                    DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id.ToString() == role.RoleId).Value;
+                    await ctx.Member.GrantRoleAsync(dRole, "[Kasumi] Giving user self-assignable role.");
+                    await ctx.RespondAsync($"Gave you the `{dRole.Name}` role.");
+                }
+                catch
+                {
+                    await ctx.RespondAsync(
+                        "An error occurred when trying to give you a role. The role you want has probably been deleted.");
+                }
+                
             }
         }
 
