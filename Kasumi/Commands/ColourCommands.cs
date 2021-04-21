@@ -50,6 +50,7 @@ namespace Kasumi.Commands
                 if (r.Name == "kasumi" + colour)
                 {
                     await ctx.Member.GrantRoleAsync(r);
+                    await ctx.RespondAsync("Updated your roles!");
                     return;
                 }
                 if (r.Name.StartsWith("kasumi#"))
@@ -84,6 +85,7 @@ namespace Kasumi.Commands
                 if (r.Name == "kasumi" + colour)
                 {
                     await member.GrantRoleAsync(r);
+                    await ctx.RespondAsync("Updated their roles!");
                     return;
                 }
                 if (r.Name.StartsWith("kasumi#"))
