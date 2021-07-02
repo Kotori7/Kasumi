@@ -44,10 +44,10 @@ namespace Kasumi.Commands
             }
         }
 
-        [Command("take")]
+        [Command("remove")]
         [Description("Removes a self-assignable role from you.")]
         [RequireBotPermissions(Permissions.ManageRoles)]
-        public async Task TakeCommand(CommandContext ctx, [RemainingText] string name)
+        public async Task RemoveCommand(CommandContext ctx, [RemainingText] string name)
         {
             using (var db = new RolesContext())
             {
@@ -89,10 +89,10 @@ namespace Kasumi.Commands
             }
         }
 
-        [Command("remove")]
-        [Description("Removes a self-assignable role. This will not automatically remove it from users who have it.")]
+        [Command("delete")]
+        [Description("Deletes a self-assignable role. This will not automatically remove it from users who have it.")]
         [RequirePermissions(Permissions.ManageRoles)]
-        public async Task RemoveCommand(CommandContext ctx, [RemainingText] string name)
+        public async Task DeleteCommand(CommandContext ctx, [RemainingText] string name)
         {
             using (var db = new RolesContext())
             {
