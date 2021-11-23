@@ -6,6 +6,7 @@ using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace Kasumi.Commands
 {
@@ -52,6 +53,7 @@ namespace Kasumi.Commands
         public async Task Shutdown(CommandContext ctx)
         {
             await ctx.RespondAsync("Farewell!");
+            ctx.Client.Logger.Log(LogLevel.Information, new EventId(705, "ClientShutdown"), $"Shutdown initiated by {ctx.User.Username}#{ctx.User.Discriminator} ({ctx.User.Id})");
             await ctx.Client.DisconnectAsync();
             Bot.TelemetryClient.Flush();
             Environment.Exit(0);

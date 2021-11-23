@@ -100,6 +100,7 @@ namespace Kasumi
         private static Task Client_Ready(DiscordClient client, DSharpPlus.EventArgs.ReadyEventArgs e)
         {
             client.Logger.Log(LogLevel.Information, new EventId(700, "ClientReady"), "Client ready!");
+            client.Logger.Log(LogLevel.Information, new EventId(700, "ClientReady"), $"Logged in as {client.CurrentUser.Username}#{client.CurrentUser.Discriminator} ({client.CurrentUser.Id})");
             return Task.CompletedTask;
         }
     }
