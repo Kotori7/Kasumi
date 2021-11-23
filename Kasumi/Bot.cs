@@ -16,8 +16,8 @@ namespace Kasumi
     {
         private static DiscordClient Client { get; set; }
         private static CommandsNextExtension Commands { get; set; }
-        public static VoiceNextExtension Voice { get; set; }
         public static readonly TelemetryClient TelemetryClient = new(); // """""datamining"""""
+        
         public static async Task BotMain()
         {
             // Discord Client Configuration
@@ -28,7 +28,9 @@ namespace Kasumi
                 AutoReconnect = true,
                 Intents = DiscordIntents.All
             };
+            
             Client = new DiscordClient(cfg);
+            
             // Events
             Client.Ready += Client_Ready;
             Client.GuildAvailable += Client_GuildAvailable;
@@ -41,12 +43,9 @@ namespace Kasumi
                 EnableDms = true,
                 StringPrefixes = new List<string>{ Globals.Prefix }
             };
-            //var cfg3 = new VoiceNextConfiguration
-            //{
-            //    VoiceApplication = DSharpPlus.VoiceNext.Codec.VoiceApplication.Music
-            //};
-            //Voice = Client.UseVoiceNext(cfg3);
+            
             TelemetryClient.InstrumentationKey = Globals.AiKey;
+            
             Commands = Client.UseCommandsNext(cfg2);
             Commands.RegisterCommands<BasicCommands>();
             Commands.RegisterCommands<InfoCommands>();
@@ -57,16 +56,21 @@ namespace Kasumi
             Commands.RegisterCommands<ModerationCommands>();
             Commands.RegisterCommands<ColourCommands>();
             Commands.RegisterCommands<AnimeCommands>();
+            
             Commands.CommandErrored += Commands_CommandErrored;
             Commands.CommandExecuted += Commands_CommandExecuted;
+            
             Globals.StartTime = DateTime.Now;
+            
             await Client.ConnectAsync();
             await Task.Delay(-1);
         }
 
         private static Task Commands_CommandExecuted(CommandsNextExtension cne, CommandExecutionEventArgs e)
         {
-            if (!Globals.Dev) TelemetryClient.TrackEvent($"Command Run: {e.Command.Name}");
+            if (!Globals.Dev)
+                TelemetryClient.TrackEvent($"Command Run: {e.Command.Name}");
+            
             return Task.CompletedTask;
         }
 
@@ -77,30 +81,50 @@ namespace Kasumi
                 await e.Context.Channel.SendMessageAsync("You can't run that command here.");
                 return;
             }
-            if (e.Exception.GetType().Name == "CommandNotFoundException") return;
-            await e.Context.Channel.SendMessageAsync($"There was a problem running that command, and a {e.Exception.GetType().Name} occured.\n More info: ```{e.Exception.Message}```");
+            
+            if (e.Exception.GetType().Name == "CommandNotFoundException")
+                return;
+            
+            await e.Context.Channel.SendMessageAsync(
+                $"There was a problem running that command, and a {e.Exception.GetType().Name} occured.\n" +
+                $"More info: ```{e.Exception.Message}```");
+            
             cne.Client.Logger.Log(LogLevel.Error, new EventId(704, "CommandError"),
                 $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nMessage: {e.Exception.Message}\nStacktrace: {e.Exception.StackTrace}");
-            if (!Globals.Dev) TelemetryClient.TrackException(e.Exception);
+            
+            if (!Globals.Dev)
+                TelemetryClient.TrackException(e.Exception);
         }
 
         private static Task Client_ClientErrored(DiscordClient client, DSharpPlus.EventArgs.ClientErrorEventArgs e)
         {
-            client.Logger.Log(LogLevel.Error, new EventId(703, "ClientError"), $"Client error: {e.Exception.GetType().Name}. \nMessage: {e.Exception.Message} \nStacktrace: {e.Exception.StackTrace}");
-            if (!Globals.Dev) TelemetryClient.TrackException(e.Exception);
+            client.Logger.Log(LogLevel.Error, new EventId(703, "ClientError"),
+                $"Client error: {e.Exception.GetType().Name}. \n" +
+                $"Message: {e.Exception.Message} \n" +
+                $"Stacktrace: {e.Exception.StackTrace}");
+            
+            if (!Globals.Dev)
+                TelemetryClient.TrackException(e.Exception);
+            
             return Task.CompletedTask;
         }
 
         private static Task Client_GuildAvailable(DiscordClient client, DSharpPlus.EventArgs.GuildCreateEventArgs e)
         {
-            client.Logger.Log(LogLevel.Information, new EventId(701, "GuildAvailable"), $"Guild available: {e.Guild.Name}");
+            client.Logger.Log(LogLevel.Information, new EventId(701, "GuildAvailable"),
+                $"Guild available: {e.Guild.Name}");
+            
             return Task.CompletedTask;
         }
 
         private static Task Client_Ready(DiscordClient client, DSharpPlus.EventArgs.ReadyEventArgs e)
         {
-            client.Logger.Log(LogLevel.Information, new EventId(700, "ClientReady"), "Client ready!");
-            client.Logger.Log(LogLevel.Information, new EventId(700, "ClientReady"), $"Logged in as {client.CurrentUser.Username}#{client.CurrentUser.Discriminator} ({client.CurrentUser.Id})");
+            client.Logger.Log(LogLevel.Information, new EventId(700, "ClientReady"), 
+                "Client ready!");
+            
+            client.Logger.Log(LogLevel.Information, new EventId(700, "ClientReady"), 
+                $"Logged in as {client.CurrentUser.Username}#{client.CurrentUser.Discriminator} ({client.CurrentUser.Id})");
+            
             return Task.CompletedTask;
         }
     }

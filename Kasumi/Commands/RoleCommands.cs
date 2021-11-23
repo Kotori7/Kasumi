@@ -23,6 +23,7 @@ namespace Kasumi.Commands
                 var role = db.AssignableRoles
                     .Where(r => r.ServerId == ctx.Guild.Id.ToString())
                     .Single(r => r.Name == name);
+                
                 if (role == null)
                 {
                     await ctx.RespondAsync("I couldn't find a role in this server by that name.");
@@ -32,9 +33,12 @@ namespace Kasumi.Commands
                 try
                 {
                     DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id.ToString() == role.RoleId).Value;
+                    
                     await ctx.Member.GrantRoleAsync(dRole, "[Kasumi] Giving user self-assignable role.");
+                    
                     await ctx.RespondAsync($"Gave you the `{dRole.Name}` role.");
                 }
+                
                 catch
                 {
                     await ctx.RespondAsync(
@@ -54,18 +58,24 @@ namespace Kasumi.Commands
                 var role = db.AssignableRoles
                     .Where(r => r.ServerId == ctx.Guild.Id.ToString())
                     .Single(r => r.Name == name);
+                
                 if (role == null)
                 {
                     await ctx.RespondAsync("I couldn't find a role in this server by that name.");
                     return;
                 }
+                
                 DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id.ToString() == role.RoleId).Value;
+                
                 if (!ctx.Member.Roles.Contains(dRole))
                 {
                     await ctx.RespondAsync("You don't seem to have that role.");
+                    
                     return;
                 }
+                
                 await ctx.Member.RevokeRoleAsync(dRole, "[Kasumi] Removing self-assignable role.");
+                
                 await ctx.RespondAsync($"You should no longer have the `{dRole.Name}` role.");
             }
         }
@@ -83,8 +93,10 @@ namespace Kasumi.Commands
                     RoleId = role.Id.ToString(),
                     ServerId = ctx.Guild.Id.ToString()
                 };
+                
                 db.AssignableRoles.Add(dbRole);
                 await db.SaveChangesAsync();
+                
                 await ctx.RespondAsync("Role added successfully.");
             }
         }
@@ -99,13 +111,16 @@ namespace Kasumi.Commands
                 var role = db.AssignableRoles
                     .Where(r => r.ServerId == ctx.Guild.Id.ToString())
                     .Single(r => r.Name == name);
+                
                 if (role == null)
                 {
                     await ctx.RespondAsync("I couldn't find a role in this server by that name.");
                     return;
                 }
+                
                 db.AssignableRoles.Remove(role);
                 await db.SaveChangesAsync();
+                
                 await ctx.RespondAsync("Removed that role successfully. It has not been taken from any users that have it, though.");
             }
         }
@@ -118,9 +133,11 @@ namespace Kasumi.Commands
             {
                 var roles = db.AssignableRoles
                     .Where(r => r.ServerId == ctx.Guild.Id.ToString());
+                
                 if (!roles.Any())
                 {
                     await ctx.RespondAsync("There are no roles available in this server.");
+                    
                     return;
                 }
 
