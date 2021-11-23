@@ -46,4 +46,4 @@ jobs:
           context: .
           file: Dockerfile.armv7
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/${{ github.repository }}:armv7
+          tags: ghcr.io/kotori7/kasumi:armv7
