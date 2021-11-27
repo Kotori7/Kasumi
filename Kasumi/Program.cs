@@ -31,7 +31,6 @@ namespace Kasumi
             
             Globals.Token = config.Token;
             Globals.Prefix = config.Prefix;
-            Globals.AiKey = config.AiKey;
             Globals.Dev = config.Dev;
             
             // Run the actual bot.

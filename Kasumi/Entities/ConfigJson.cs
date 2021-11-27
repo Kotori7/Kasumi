@@ -9,10 +9,7 @@ namespace Kasumi.Entities
         
         [JsonProperty("prefix")]
         public string Prefix { get; private set; }
-        
-        [JsonProperty("ai_key")]
-        public string AiKey { get; private set; }
-        
+
         [JsonProperty("dev")]
         public bool Dev { get; private set; }
     }

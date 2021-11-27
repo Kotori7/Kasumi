@@ -10,8 +10,6 @@ namespace Kasumi
         
         public static DateTime StartTime { get; set; }
 
-        public static string AiKey { get; set; }
-        
         public static bool Dev { get; set; }
     }
 }
