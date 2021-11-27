@@ -67,9 +67,7 @@ namespace Kasumi.Commands
                 $"Shutdown initiated by {ctx.User.Username}#{ctx.User.Discriminator} ({ctx.User.Id})");
             
             await ctx.Client.DisconnectAsync();
-            
-            Bot.TelemetryClient.Flush();
-            
+
             Environment.Exit(0);
         }
         

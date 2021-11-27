@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.VoiceNext;
-using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Logging;
 
 #pragma warning disable CS0618
@@ -16,8 +15,7 @@ namespace Kasumi
     {
         private static DiscordClient Client { get; set; }
         private static CommandsNextExtension Commands { get; set; }
-        public static readonly TelemetryClient TelemetryClient = new(); // """""datamining"""""
-        
+
         public static async Task BotMain()
         {
             // Discord Client Configuration
@@ -43,9 +41,7 @@ namespace Kasumi
                 EnableDms = true,
                 StringPrefixes = new List<string>{ Globals.Prefix }
             };
-            
-            TelemetryClient.InstrumentationKey = Globals.AiKey;
-            
+
             Commands = Client.UseCommandsNext(cfg2);
             Commands.RegisterCommands<BasicCommands>();
             Commands.RegisterCommands<InfoCommands>();
@@ -68,9 +64,7 @@ namespace Kasumi
 
         private static Task Commands_CommandExecuted(CommandsNextExtension cne, CommandExecutionEventArgs e)
         {
-            if (!Globals.Dev)
-                TelemetryClient.TrackEvent($"Command Run: {e.Command.Name}");
-            
+
             return Task.CompletedTask;
         }
 
@@ -91,9 +85,6 @@ namespace Kasumi
             
             cne.Client.Logger.Log(LogLevel.Error, new EventId(704, "CommandError"),
                 $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nMessage: {e.Exception.Message}\nStacktrace: {e.Exception.StackTrace}");
-            
-            if (!Globals.Dev)
-                TelemetryClient.TrackException(e.Exception);
         }
 
         private static Task Client_ClientErrored(DiscordClient client, DSharpPlus.EventArgs.ClientErrorEventArgs e)
@@ -102,10 +93,7 @@ namespace Kasumi
                 $"Client error: {e.Exception.GetType().Name}. \n" +
                 $"Message: {e.Exception.Message} \n" +
                 $"Stacktrace: {e.Exception.StackTrace}");
-            
-            if (!Globals.Dev)
-                TelemetryClient.TrackException(e.Exception);
-            
+
             return Task.CompletedTask;
         }
 
