@@ -62,10 +62,16 @@ namespace Kasumi
             await Task.Delay(-1);
         }
 
-        private static Task Commands_CommandExecuted(CommandsNextExtension cne, CommandExecutionEventArgs e)
+        private static async Task Commands_CommandExecuted(CommandsNextExtension cne, CommandExecutionEventArgs e)
         {
+            var payload = new Dictionary<string, object>()
+            {
+                { "eventType", "CommandExecuted" },
+                { "command", e.Command.QualifiedName },
+                { "timestamp", e.Context.Message.Timestamp.ToString() }
+            };
 
-            return Task.CompletedTask;
+            await Globals.TelemetryClient.SendEvent(payload);
         }
 
         private static async Task Commands_CommandErrored(CommandsNextExtension cne, CommandErrorEventArgs e)
@@ -82,9 +88,18 @@ namespace Kasumi
             await e.Context.Channel.SendMessageAsync(
                 $"There was a problem running that command, and a {e.Exception.GetType().Name} occured.\n" +
                 $"More info: ```{e.Exception.Message}```");
-            
-            cne.Client.Logger.Log(LogLevel.Error, new EventId(704, "CommandError"),
-                $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nMessage: {e.Exception.Message}\nStacktrace: {e.Exception.StackTrace}");
+
+            var payload = new Dictionary<string, object>()
+            {
+                { "eventType", "CommandException" },
+                { "exception", e.Exception.GetType().Name },
+                { "message", e.Exception.Message },
+                { "command", e.Command.QualifiedName },
+                { "timestamp", e.Context.Message.Timestamp.ToString() }
+            };
+            await Globals.TelemetryClient.SendEvent(payload);
+            // cne.Client.Logger.Log(LogLevel.Error, new EventId(704, "CommandError"),
+            //     $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nMessage: {e.Exception.Message}\nStacktrace: {e.Exception.StackTrace}");
         }
 
         private static Task Client_ClientErrored(DiscordClient client, DSharpPlus.EventArgs.ClientErrorEventArgs e)

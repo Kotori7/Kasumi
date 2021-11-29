@@ -1,4 +1,5 @@
 ﻿using System;
+using Kasumi.Telemetry;
 
 namespace Kasumi
 {
@@ -11,5 +12,7 @@ namespace Kasumi
         public static DateTime StartTime { get; set; }
 
         public static bool Dev { get; set; }
+
+        public static TelemetryClient TelemetryClient { get; set; }
     }
 }

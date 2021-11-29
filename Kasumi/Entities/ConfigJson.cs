@@ -12,5 +12,11 @@ namespace Kasumi.Entities
 
         [JsonProperty("dev")]
         public bool Dev { get; private set; }
+        
+        [JsonProperty("new_relic_account_id")]
+        public string NewRelicID { get; private set; }
+        
+        [JsonProperty("new_relic_license_key")]
+        public string NewRelicKey { get; private set; }
     }
 }

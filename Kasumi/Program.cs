@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Kasumi.Entities;
 using System.Text;
 using System.Threading.Tasks;
+using Kasumi.Telemetry;
 
 namespace Kasumi
 {
@@ -32,6 +33,7 @@ namespace Kasumi
             Globals.Token = config.Token;
             Globals.Prefix = config.Prefix;
             Globals.Dev = config.Dev;
+            Globals.TelemetryClient = new TelemetryClient(config.NewRelicID, config.NewRelicKey);
             
             // Run the actual bot.
             await Bot.BotMain();
