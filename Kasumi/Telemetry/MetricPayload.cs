@@ -10,8 +10,4 @@ public struct MetricPayload
 
     public object Value;
 
-    public long Timestamp;
-
-    public Dictionary<string, string> Attributes;
-
 }

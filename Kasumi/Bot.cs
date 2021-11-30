@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Threading;
 using Kasumi.Commands;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.VoiceNext;
+using Kasumi.Telemetry;
 using Microsoft.Extensions.Logging;
 
 #pragma warning disable CS0618
@@ -59,7 +62,40 @@ namespace Kasumi
             Globals.StartTime = DateTime.Now;
             
             await Client.ConnectAsync();
+
+            Thread metricsThread = new Thread(RunMetrics);
+            metricsThread.Start();
+            
             await Task.Delay(-1);
+        }
+
+        private static async void RunMetrics()
+        {
+            int interval;
+            interval = Globals.Dev ? 10000 : 60000;
+            
+            while (true)
+            {
+                await Task.Delay(10000);
+                
+                MetricPayload pingPayload = new()
+                {
+                    Name = "kasumi.ping",
+                    Type = "gauge",
+                    Value = (float)Client.Ping
+                };
+                MetricPayload serverPayload = new()
+                {
+                    Name = "kasumi.server.count",
+                    Type = "count",
+                    Value = Client.Guilds.Count
+                };
+
+                await Globals.TelemetryClient.SendMetrics(new [] {pingPayload, serverPayload}, interval);
+                
+                await Task.Delay(interval - 10000);
+            }
+
         }
 
         private static async Task Commands_CommandExecuted(CommandsNextExtension cne, CommandExecutionEventArgs e)

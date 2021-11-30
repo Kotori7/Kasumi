@@ -33,7 +33,7 @@ public class TelemetryClient
 
     }
 
-    public async Task SendMetrics(MetricPayload[] payloads)
+    public async Task SendMetrics(MetricPayload[] payloads, int interval)
     {
         List<string> payloadJson = new();
         long currentUnixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -41,20 +41,23 @@ public class TelemetryClient
 
         foreach (var payload in payloads)
         {
-            var payload2 = payload;
-
-            payload2.Timestamp = currentUnixTime;
-            payload2.Attributes.Add("host.name", hostname);
-            
-            string json = JsonConvert.SerializeObject(payload2);
+            string json = JsonConvert.SerializeObject(payload);
             payloadJson.Add(json);
         }
 
-        string finalJson = String.Join(',', payloadJson);
+        // this is a bit ugly but it works so who cares
+        string finalJson = "[{\"common\":{\"timestamp\":" + currentUnixTime + ",";
+        finalJson += "\"interval.ms\":" + interval + ",";
+        finalJson += "\"attributes\":{\"host.name\":\"" + hostname + "\",\"app.name\":\"kasumi\"}}";
+        finalJson += ",\"metrics\":[";
+        finalJson += string.Join(",", payloadJson).ToLower();
+        finalJson += "]}]";
+
+        if (Globals.Dev) return; // we don't need to send metrics in dev mode
 
         var apiResponse = await _metricUrl.WithHeader("Content-Type", "application/json")
             .WithHeader("Api-Key", _licenseKey)
-            .SendJsonAsync(HttpMethod.Post, finalJson);
+            .SendAsync(HttpMethod.Post, new StringContent(finalJson));
 
         if (!apiResponse.StatusCode.Equals(202))
             throw new HttpRequestException(
