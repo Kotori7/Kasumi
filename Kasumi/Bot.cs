@@ -14,24 +14,27 @@ using Microsoft.Extensions.Logging;
 
 namespace Kasumi
 {
-    public static class Bot
+    public class Bot
     {
-        private static DiscordClient Client { get; set; }
-        private static CommandsNextExtension Commands { get; set; }
+        public static DiscordClient Client { get; set; }
+        public static CommandsNextExtension Commands { get; set; }
+        public static DateTime StartTime { get; set; }
+        public static bool IsDevelopment { get; set; }
+        public static TelemetryClient TelemetryClient { get; set; }
 
-        public static async Task BotMain()
+        public Bot(Entities.ConfigJson config)
         {
             // Discord Client Configuration
             var cfg = new DiscordConfiguration
             {
-                Token = Globals.Token,
+                Token = config.Token,
                 TokenType = TokenType.Bot,
                 AutoReconnect = true,
                 Intents = DiscordIntents.All
             };
-            
+
             Client = new DiscordClient(cfg);
-            
+
             // Events
             Client.Ready += Client_Ready;
             Client.GuildAvailable += Client_GuildAvailable;
@@ -42,7 +45,7 @@ namespace Kasumi
             {
                 EnableMentionPrefix = true,
                 EnableDms = true,
-                StringPrefixes = new List<string>{ Globals.Prefix }
+                StringPrefixes = new List<string> { config.Prefix }
             };
 
             Commands = Client.UseCommandsNext(cfg2);
@@ -55,11 +58,19 @@ namespace Kasumi
             Commands.RegisterCommands<ModerationCommands>();
             Commands.RegisterCommands<ColourCommands>();
             Commands.RegisterCommands<AnimeCommands>();
-            
+
             Commands.CommandErrored += Commands_CommandErrored;
             Commands.CommandExecuted += Commands_CommandExecuted;
-            
-            Globals.StartTime = DateTime.Now;
+
+            IsDevelopment = config.Dev;
+
+            StartTime = DateTime.Now;
+
+            TelemetryClient = new(config.NewRelicID, config.NewRelicKey);
+        }
+
+        public async Task Start()
+        {
             
             await Client.ConnectAsync();
 
@@ -72,7 +83,7 @@ namespace Kasumi
         private static async void RunMetrics()
         {
             int interval;
-            interval = Globals.Dev ? 10000 : 60000;
+            interval = IsDevelopment ? 10000 : 60000;
             
             while (true)
             {
@@ -91,7 +102,7 @@ namespace Kasumi
                     Value = Client.Guilds.Count
                 };
 
-                await Globals.TelemetryClient.SendMetrics(new [] {pingPayload, serverPayload}, interval);
+                if (!IsDevelopment) await TelemetryClient.SendMetrics(new [] {pingPayload, serverPayload}, interval);
                 
                 await Task.Delay(interval - 10000);
             }
@@ -107,7 +118,7 @@ namespace Kasumi
                 { "timestamp", e.Context.Message.Timestamp.ToString() }
             };
 
-            await Globals.TelemetryClient.SendEvent(payload);
+            if (!IsDevelopment) await TelemetryClient.SendEvent(payload);
         }
 
         private static async Task Commands_CommandErrored(CommandsNextExtension cne, CommandErrorEventArgs e)
@@ -133,9 +144,9 @@ namespace Kasumi
                 { "command", e.Command.QualifiedName },
                 { "timestamp", e.Context.Message.Timestamp.ToString() }
             };
-            await Globals.TelemetryClient.SendEvent(payload);
-            // cne.Client.Logger.Log(LogLevel.Error, new EventId(704, "CommandError"),
-            //     $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nMessage: {e.Exception.Message}\nStacktrace: {e.Exception.StackTrace}");
+            await TelemetryClient.SendEvent(payload);
+            cne.Client.Logger.Log(LogLevel.Error, new EventId(704, "CommandError"),
+                $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nMessage: {e.Exception.Message}\nStacktrace: {e.Exception.StackTrace}");
         }
 
         private static Task Client_ClientErrored(DiscordClient client, DSharpPlus.EventArgs.ClientErrorEventArgs e)

@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using Kasumi.Entities;
 using System.Text;
 using System.Threading.Tasks;
-using Kasumi.Telemetry;
 
 namespace Kasumi
 {
@@ -24,19 +23,15 @@ namespace Kasumi
             
             // Parse the configuration
             string json;
-            await using (var fs = File.OpenRead("config.json")) 
-                // ReSharper disable line HeapView.ObjectAllocation.Evident
+            await using (var fs = File.OpenRead("config.json"))
+            // ReSharper disable line HeapView.ObjectAllocation.Evident
             using (var sr = new StreamReader(fs, new UTF8Encoding(false)))
-                json = sr.ReadToEndAsync().GetAwaiter().GetResult();
+                json = await sr.ReadToEndAsync();
             var config = JsonConvert.DeserializeObject<ConfigJson>(json);
-            
-            Globals.Token = config.Token;
-            Globals.Prefix = config.Prefix;
-            Globals.Dev = config.Dev;
-            Globals.TelemetryClient = new TelemetryClient(config.NewRelicID, config.NewRelicKey);
-            
-            // Run the actual bot.
-            await Bot.BotMain();
+
+            Bot bot = new(config);
+
+            await bot.Start();
         }
     }
 }
