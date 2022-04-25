@@ -1,4 +1,4 @@
-name: Docker Publish
+name: Docker Publish (armv7)
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -44,6 +44,6 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
-          file: Dockerfile
+          file: Dockerfile.armv7
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/kotori7/kasumi:latest
+          tags: ghcr.io/kotori7/kasumi:armv7
