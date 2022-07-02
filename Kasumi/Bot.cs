@@ -144,7 +144,7 @@ namespace Kasumi
                 { "command", e.Command.QualifiedName },
                 { "timestamp", e.Context.Message.Timestamp.ToString() }
             };
-            await TelemetryClient.SendEvent(payload);
+            if (!IsDevelopment) await TelemetryClient.SendEvent(payload);
             cne.Client.Logger.Log(LogLevel.Error, new EventId(704, "CommandError"),
                 $"Exception {e.Exception.GetType().Name} occurred while running command {e.Command.Name}. \nMessage: {e.Exception.Message}\nStacktrace: {e.Exception.StackTrace}");
         }
