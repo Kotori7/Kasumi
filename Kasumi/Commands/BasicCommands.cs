@@ -36,22 +36,22 @@ namespace Kasumi.Commands
             
             sb.Append("I've been up and running for ");
             
-            if ((DateTime.Now - Globals.StartTime).Days != 0)
+            if ((DateTime.Now - Bot.StartTime).Days != 0)
             {
-                sb.Append($"{(DateTime.Now - Globals.StartTime).Days} days ");
+                sb.Append($"{(DateTime.Now - Bot.StartTime).Days} days ");
             }
             
-            if ((DateTime.Now - Globals.StartTime).Hours != 0)
+            if ((DateTime.Now - Bot.StartTime).Hours != 0)
             {
-                sb.Append($"{(DateTime.Now - Globals.StartTime).Hours} hours ");
+                sb.Append($"{(DateTime.Now - Bot.StartTime).Hours} hours ");
             }
             
-            if ((DateTime.Now - Globals.StartTime).Minutes != 0)
+            if ((DateTime.Now - Bot.StartTime).Minutes != 0)
             {
-                sb.Append($"{(DateTime.Now - Globals.StartTime).Minutes} minutes ");
+                sb.Append($"{(DateTime.Now - Bot.StartTime).Minutes} minutes ");
             }
             
-            sb.Append($"{(DateTime.Now - Globals.StartTime).Seconds} seconds.");
+            sb.Append($"{(DateTime.Now - Bot.StartTime).Seconds} seconds.");
             
             await ctx.RespondAsync(sb.ToString());
         }
