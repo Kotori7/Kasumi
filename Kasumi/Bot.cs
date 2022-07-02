@@ -16,11 +16,12 @@ namespace Kasumi
 {
     public class Bot
     {
-        public static DiscordClient Client { get; set; }
-        public static CommandsNextExtension Commands { get; set; }
-        public static DateTime StartTime { get; set; }
-        public static bool IsDevelopment { get; set; }
-        public static TelemetryClient TelemetryClient { get; set; }
+        public static DiscordClient Client { get; private set; }
+        public static CommandsNextExtension Commands { get; private set; }
+        public static DateTime StartTime { get; private set; }
+        public static bool IsDevelopment { get; private set; }
+        public static TelemetryClient TelemetryClient { get; private set; }
+        public static string Version { get; private set; }
 
         public Bot(Entities.ConfigJson config)
         {
@@ -67,10 +68,14 @@ namespace Kasumi
             StartTime = DateTime.Now;
 
             TelemetryClient = new(config.NewRelicID, config.NewRelicKey);
+
+            Version = "1.0.2";
         }
 
         public async Task Start()
         {
+            Client.Logger.Log(LogLevel.Information, new EventId(100, "Startup"), 
+                $"Starting Kasumi version {Version} ({(IsDevelopment ? "development" : "production")})");
             
             await Client.ConnectAsync();
 

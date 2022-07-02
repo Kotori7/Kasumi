@@ -80,7 +80,7 @@ namespace Kasumi.Commands
             embedBuilder.AddField("System Version", Environment.OSVersion.VersionString);
             embedBuilder.AddField("Architecture", System.Runtime.InteropServices.RuntimeInformation.OSArchitecture.ToString(), true);
             embedBuilder.AddField("RAM Usage", $"{Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024} MB", true);
-            embedBuilder.AddField("Bot Version", await System.IO.File.ReadAllTextAsync("version"), true);
+            embedBuilder.AddField("Bot Version", Bot.Version, true);
             embedBuilder.AddField(".NET Version", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription.ToString(), true);
             
             await ctx.RespondAsync(embedBuilder.Build());
