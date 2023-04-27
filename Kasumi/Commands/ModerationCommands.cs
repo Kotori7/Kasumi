@@ -1,7 +1,9 @@
-﻿using DSharpPlus.Entities;
+﻿using System;
+using DSharpPlus.Entities;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using System.Threading.Tasks;
+using DSharpPlus.Net.Models;
 
 namespace Kasumi.Commands
 {
@@ -31,6 +33,37 @@ namespace Kasumi.Commands
             foreach(DiscordMessage m in messages)
                 await m.DeleteAsync($"Message nuke called by {ctx.User.Username}#{ctx.User.Discriminator}");
             
+        }
+
+        [Command("nickname")]
+        [Description("Sets a nickname for another user")]
+        [Aliases("nick")]
+        [RequirePermissions(DSharpPlus.Permissions.ManageNicknames)]
+        public async Task Nickname(CommandContext ctx, DiscordMember target, [RemainingText] string nickname)
+        {
+            await target.ModifyAsync(delegate(MemberEditModel model)
+            {
+                model.AuditLogReason = $"Nickname updated by {ctx.User.Username}#{ctx.User.Discriminator}";
+                model.Nickname = nickname;
+            });
+
+            await ctx.Message.CreateReactionAsync(
+                DiscordEmoji.FromName(ctx.Client, ":white_check_mark:", false));
+        }
+
+        [Command("unnick")]
+        [Description("Removes a nickname from a user")]
+        [RequirePermissions(DSharpPlus.Permissions.ManageNicknames)]
+        public async Task Unnick(CommandContext ctx, DiscordMember target)
+        {
+            await target.ModifyAsync(delegate(MemberEditModel model)
+            {
+                model.AuditLogReason = $"Nickname removed by {ctx.User.Username}#{ctx.User.Discriminator}";
+                model.Nickname = "";
+            });
+            
+            await ctx.Message.CreateReactionAsync(
+                DiscordEmoji.FromName(ctx.Client, ":white_check_mark:", false));
         }
     }
 }
