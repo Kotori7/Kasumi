@@ -37,7 +37,8 @@ namespace Kasumi
             Client = new DiscordClient(cfg);
 
             // Events
-            Client.Ready += Client_Ready;
+            
+            Client.SessionCreated += Client_SessionCreated;
             Client.GuildAvailable += Client_GuildAvailable;
             Client.ClientErrored += Client_ClientErrored;
 
@@ -172,7 +173,7 @@ namespace Kasumi
             return Task.CompletedTask;
         }
 
-        private static Task Client_Ready(DiscordClient client, DSharpPlus.EventArgs.ReadyEventArgs e)
+        private static Task Client_SessionCreated(DiscordClient client, DSharpPlus.EventArgs.SessionReadyEventArgs e)
         {
             client.Logger.Log(LogLevel.Information, new EventId(700, "ClientReady"), 
                 "Client ready!");

@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="5.0.0-nightly-01507" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="5.0.0-nightly-01507" />
-    <PackageReference Include="DSharpPlus.VoiceNext" Version="5.0.0-nightly-01507" />
+    <PackageReference Include="DSharpPlus" Version="5.0.0-nightly-01690" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="5.0.0-nightly-01690" />
+    <PackageReference Include="DSharpPlus.VoiceNext" Version="5.0.0-nightly-01690" />
     <PackageReference Include="Flurl.Http" Version="4.0.0-pre3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0-preview.3.23174.2">
       <PrivateAssets>all</PrivateAssets>
