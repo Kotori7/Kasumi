@@ -6,7 +6,9 @@ using Kasumi.Commands;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.SlashCommands;
 using DSharpPlus.VoiceNext;
+using Kasumi.SlashCommands;
 using Kasumi.Telemetry;
 using Microsoft.Extensions.Logging;
 
@@ -65,6 +67,9 @@ namespace Kasumi
             Commands.CommandExecuted += Commands_CommandExecuted;
 
             IsDevelopment = config.Dev;
+
+            SlashCommandsExtension slash = Client.UseSlashCommands();
+            slash.RegisterCommands<SlashCommands.SlashCommands>(ulong.Parse(config.DevServerId));
 
             StartTime = DateTime.Now;
 

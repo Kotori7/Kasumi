@@ -13,6 +13,9 @@ namespace Kasumi.Entities
         [JsonProperty("dev")]
         public bool Dev { get; private set; }
         
+        [JsonProperty("dev_server_id")]
+        public string DevServerId { get; private set; }
+        
         [JsonProperty("new_relic_account_id")]
         public string NewRelicID { get; private set; }
         

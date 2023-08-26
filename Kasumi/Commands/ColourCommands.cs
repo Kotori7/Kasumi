@@ -19,8 +19,8 @@ namespace Kasumi.Commands
         [Aliases("color")] // fuckin americans
         public async Task Colour(CommandContext ctx, [Description("Hex code or name of a colour.")] string colour)
         {
-            if (colours.ContainsKey(colour))
-                colour = colours[colour];
+            if (colours.TryGetValue(colour, out var colour1))
+                colour = colour1;
 
             if (!colour.StartsWith('#'))
                 colour = $"#{colour}";
