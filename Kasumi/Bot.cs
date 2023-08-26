@@ -69,7 +69,10 @@ namespace Kasumi
             IsDevelopment = config.Dev;
 
             SlashCommandsExtension slash = Client.UseSlashCommands();
-            slash.RegisterCommands<SlashCommands.SlashCommands>(ulong.Parse(config.DevServerId));
+            if (IsDevelopment)
+                slash.RegisterCommands<SlashCommands.SlashCommands>(ulong.Parse(config.DevServerId));
+            else
+                slash.RegisterCommands<SlashCommands.SlashCommands>();
 
             StartTime = DateTime.Now;
 
