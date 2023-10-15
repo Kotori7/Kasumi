@@ -138,6 +138,54 @@ public class SlashCommands : ApplicationCommandModule
             new DiscordInteractionResponseBuilder().WithContent("Updated successfully!"));
     }
     
+    [SlashCommand("setnick", "Sets a nickname for another user")]
+    [SlashRequireGuild]
+    [SlashRequirePermissions(DSharpPlus.Permissions.ManageNicknames)]
+    public async Task Nickname(InteractionContext ctx, 
+        [Option("target", "Target user to change nickname of")] DiscordUser targetUser,
+        [Option("nick", "New nickname to set")] string nickname)
+    {
+        if (!ctx.Guild.Members.TryGetValue(targetUser.Id, out var target))
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder().WithContent("Invalid target user."));
+            
+            return;
+        }
+        
+        await target.ModifyAsync(delegate(DSharpPlus.Net.Models.MemberEditModel model)
+        {
+            model.AuditLogReason = $"Nickname updated by {ctx.User.Username}";
+            model.Nickname = nickname;
+        });
+
+        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            new DiscordInteractionResponseBuilder().WithContent(":white_check_mark:"));
+    }
+    
+    [SlashCommand("unnick", "Removes a nickname from a user")]
+    [SlashRequirePermissions(DSharpPlus.Permissions.ManageNicknames)]
+    public async Task Unnick(InteractionContext ctx, 
+        [Option("target", "User to remove nickname from")] DiscordUser targetUser)
+    {
+        if (!ctx.Guild.Members.TryGetValue(targetUser.Id, out var target))
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder().WithContent("Invalid target user."));
+            
+            return;
+        }
+        
+        await target.ModifyAsync(delegate(DSharpPlus.Net.Models.MemberEditModel model)
+        {
+            model.AuditLogReason = $"Nickname removed by {ctx.User.Username}";
+            model.Nickname = "";
+        });
+            
+        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            new DiscordInteractionResponseBuilder().WithContent(":white_check_mark:"));
+    }
+    
     #region Predefined Colours
 
     private readonly Dictionary<string, string> _colours = new()
