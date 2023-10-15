@@ -78,7 +78,7 @@ namespace Kasumi
 
             TelemetryClient = new(config.NewRelicID, config.NewRelicKey);
 
-            Version = "1.1.0";
+            Version = "1.1.1";
         }
 
         public async Task Start()
