@@ -15,9 +15,9 @@ namespace Kasumi.Commands
         public async Task Ban(CommandContext ctx, DiscordMember mem, [RemainingText] string reason)
         {
             await ctx.Guild.BanMemberAsync(mem, 0, 
-                $"[Ban by {ctx.User.Username}#{ctx.User.Discriminator}] {reason}");
+                $"[Ban by {Helpers.GetUsername(ctx.User)}] {reason}");
             
-            await ctx.RespondAsync($"{mem.Username}#{mem.Discriminator} got bent");
+            await ctx.RespondAsync($"{Helpers.GetUsername(ctx.User)} got bent");
         }
         
         [Command("nuke")]
@@ -26,12 +26,12 @@ namespace Kasumi.Commands
         [RequirePermissions(DSharpPlus.Permissions.ManageMessages)]
         public async Task Nuke(CommandContext ctx, [Description("The amount of messages to delete")] int amount)
         {
-            await ctx.Message.DeleteAsync($"Message nuke called by {ctx.User.Username}#{ctx.User.Discriminator}");
+            await ctx.Message.DeleteAsync($"Message nuke called by {Helpers.GetUsername(ctx.User)}");
             
             System.Collections.Generic.IReadOnlyList<DiscordMessage> messages = await ctx.Channel.GetMessagesAsync(amount);
             
             foreach(DiscordMessage m in messages)
-                await m.DeleteAsync($"Message nuke called by {ctx.User.Username}#{ctx.User.Discriminator}");
+                await m.DeleteAsync($"Message nuke called by {Helpers.GetUsername(ctx.User)}");
             
         }
 
@@ -43,7 +43,7 @@ namespace Kasumi.Commands
         {
             await target.ModifyAsync(delegate(MemberEditModel model)
             {
-                model.AuditLogReason = $"Nickname updated by {ctx.User.Username}#{ctx.User.Discriminator}";
+                model.AuditLogReason = $"Nickname updated by {Helpers.GetUsername(ctx.User)}";
                 model.Nickname = nickname;
             });
 
@@ -58,7 +58,7 @@ namespace Kasumi.Commands
         {
             await target.ModifyAsync(delegate(MemberEditModel model)
             {
-                model.AuditLogReason = $"Nickname removed by {ctx.User.Username}#{ctx.User.Discriminator}";
+                model.AuditLogReason = $"Nickname removed by {Helpers.GetUsername(ctx.User)}";
                 model.Nickname = "";
             });
             

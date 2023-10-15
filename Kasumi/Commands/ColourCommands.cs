@@ -56,10 +56,10 @@ namespace Kasumi.Commands
             
             DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DSharpPlus.Permissions.None,
                 new DiscordColor(colour), false, false,
-                $"[Kasumi] Colour role for {ctx.User.Username}#{ctx.User.Discriminator}");
+                $"[Kasumi] Colour role for {Helpers.GetUsername(ctx.User)}");
             
             await ctx.Member.GrantRoleAsync(rr,
-                $"[Kasumi] Colour role for {ctx.User.Username}#{ctx.User.Discriminator}");
+                $"[Kasumi] Colour role for {Helpers.GetUsername(ctx.User)}");
             
             await ctx.RespondAsync("Updated your roles!");
         }
@@ -106,10 +106,10 @@ namespace Kasumi.Commands
             }
             DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DSharpPlus.Permissions.None, 
                 new DiscordColor(colour), false, false,
-                $"[Kasumi] Colour role override for {member.Username}#{member.Discriminator}");
+                $"[Kasumi] Colour role override for {Helpers.GetUsername(ctx.User)}");
             
             await member.GrantRoleAsync(rr,
-                $"[Kasumi] Colour role override for {member.Username}#{member.Discriminator}");
+                $"[Kasumi] Colour role override for {Helpers.GetUsername(ctx.User)}");
             
             await ctx.RespondAsync("Updated their roles!");
         }

@@ -49,7 +49,7 @@ public class SlashCommands : ApplicationCommandModule
             if (r.Name == "kasumi" + colour)
             {
                 await ctx.Member.GrantRoleAsync(r,
-                    $"[Kasumi] Colour role for {ctx.User.Username}");
+                    $"[Kasumi] Colour role for {Helpers.GetUsername(ctx.User)}");
                     
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
                     new DiscordInteractionResponseBuilder().WithContent("Updated successfully!"));
@@ -64,10 +64,10 @@ public class SlashCommands : ApplicationCommandModule
             
         DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, Permissions.None,
             new DiscordColor(colour), false, false,
-            $"[Kasumi] Colour role for {ctx.Member.Username}");
+            $"[Kasumi] Colour role for {Helpers.GetUsername(ctx.User)}");
             
         await ctx.Member.GrantRoleAsync(rr,
-            $"[Kasumi] Colour role for {ctx.User.Username}");
+            $"[Kasumi] Colour role for {Helpers.GetUsername(ctx.User)}");
             
         await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent("Updated successfully!"));
@@ -114,7 +114,7 @@ public class SlashCommands : ApplicationCommandModule
             if (r.Name == "kasumi" + colour)
             {
                 await target.GrantRoleAsync(r,
-                    $"[Kasumi] Colour role for {target.Username} set by {ctx.User.Username}");
+                    $"[Kasumi] Colour role for {Helpers.GetUsername(target)} set by {Helpers.GetUsername(ctx.User)}");
                     
                 await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
                     new DiscordInteractionResponseBuilder().WithContent("Updated successfully!"));
@@ -129,10 +129,10 @@ public class SlashCommands : ApplicationCommandModule
             
         DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, Permissions.None,
             new DiscordColor(colour), false, false,
-            $"[Kasumi] Colour role for {target.Username} set by {ctx.User.Username}");
+            $"[Kasumi] Colour role for {Helpers.GetUsername(target)} set by {Helpers.GetUsername(ctx.User)}");
             
         await target.GrantRoleAsync(rr,
-            $"[Kasumi] Colour role for {target.Username} set by {ctx.User.Username}");
+            $"[Kasumi] Colour role for {Helpers.GetUsername(target)} set by {Helpers.GetUsername(ctx.User)}");
             
         await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent("Updated successfully!"));
@@ -155,7 +155,7 @@ public class SlashCommands : ApplicationCommandModule
         
         await target.ModifyAsync(delegate(DSharpPlus.Net.Models.MemberEditModel model)
         {
-            model.AuditLogReason = $"Nickname updated by {ctx.User.Username}";
+            model.AuditLogReason = $"Nickname updated by {Helpers.GetUsername(ctx.User)}";
             model.Nickname = nickname;
         });
 
@@ -178,7 +178,7 @@ public class SlashCommands : ApplicationCommandModule
         
         await target.ModifyAsync(delegate(DSharpPlus.Net.Models.MemberEditModel model)
         {
-            model.AuditLogReason = $"Nickname removed by {ctx.User.Username}";
+            model.AuditLogReason = $"Nickname removed by {Helpers.GetUsername(ctx.User)}";
             model.Nickname = "";
         });
             
