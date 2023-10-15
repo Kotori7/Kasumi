@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using DSharpPlus.Entities;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -28,7 +29,8 @@ namespace Kasumi.Commands
         {
             await ctx.Message.DeleteAsync($"Message nuke called by {Helpers.GetUsername(ctx.User)}");
             
-            System.Collections.Generic.IReadOnlyList<DiscordMessage> messages = await ctx.Channel.GetMessagesAsync(amount);
+            System.Collections.Generic.IReadOnlyList<DiscordMessage> messages = await ctx.Channel
+                .GetMessagesAsync(amount).ToListAsync();
             
             foreach(DiscordMessage m in messages)
                 await m.DeleteAsync($"Message nuke called by {Helpers.GetUsername(ctx.User)}");
