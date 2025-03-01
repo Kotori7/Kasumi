@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading;
 using Kasumi.Commands;
 using System.Threading.Tasks;
@@ -28,21 +29,15 @@ namespace Kasumi
         public Bot(Entities.ConfigJson config)
         {
             // Discord Client Configuration
-            var cfg = new DiscordConfiguration
-            {
-                Token = config.Token,
-                TokenType = TokenType.Bot,
-                AutoReconnect = true,
-                Intents = DiscordIntents.All
-            };
-
-            Client = new DiscordClient(cfg);
-
-            // Events
+            DiscordClientBuilder clientBuilder = DiscordClientBuilder.CreateDefault(
+                config.Token,
+                DiscordIntents.All);
             
-            Client.SessionCreated += Client_SessionCreated;
-            Client.GuildAvailable += Client_GuildAvailable;
-            Client.ClientErrored += Client_ClientErrored;
+            // Events
+            clientBuilder.ConfigureEventHandlers(
+                b => b.HandleSessionCreated((s, e) => Client_SessionCreated(s, e))
+                    .HandleGuildAvailable((s, e) => Client_GuildAvailable(s, e))
+            );
 
             // CommandsNext Configuration
             var cfg2 = new CommandsNextConfiguration
@@ -51,34 +46,39 @@ namespace Kasumi
                 EnableDms = true,
                 StringPrefixes = new List<string> { config.Prefix }
             };
-
-            Commands = Client.UseCommandsNext(cfg2);
-            Commands.RegisterCommands<BasicCommands>();
-            Commands.RegisterCommands<InfoCommands>();
-            Commands.RegisterCommands<FunCommands>();
-            Commands.RegisterCommands<NsfwCommands>();
-            Commands.RegisterCommands<RoleCommands>();
-            Commands.RegisterCommands<HashingCommands>();
-            Commands.RegisterCommands<ModerationCommands>();
-            Commands.RegisterCommands<ColourCommands>();
-            Commands.RegisterCommands<AnimeCommands>();
-
-            Commands.CommandErrored += Commands_CommandErrored;
-            Commands.CommandExecuted += Commands_CommandExecuted;
-
+            
             IsDevelopment = config.Dev;
-
-            SlashCommandsExtension slash = Client.UseSlashCommands();
-            if (IsDevelopment)
-                slash.RegisterCommands<SlashCommands.SlashCommands>(ulong.Parse(config.DevServerId));
-            else
-                slash.RegisterCommands<SlashCommands.SlashCommands>();
-
+            
+            // Register CommandsNext
+            clientBuilder.UseCommandsNext(cne =>
+            {
+                cne.RegisterCommands<BasicCommands>();
+                cne.RegisterCommands<InfoCommands>();
+                cne.RegisterCommands<FunCommands>();
+                cne.RegisterCommands<NsfwCommands>();
+                cne.RegisterCommands<RoleCommands>();
+                cne.RegisterCommands<HashingCommands>();
+                cne.RegisterCommands<ModerationCommands>();
+                cne.RegisterCommands<ColourCommands>();
+                cne.RegisterCommands<AnimeCommands>();
+                cne.CommandErrored += Commands_CommandErrored;
+                cne.CommandExecuted += Commands_CommandExecuted;
+            }, cfg2);
+            clientBuilder.UseSlashCommands(slash =>
+            {
+                if (IsDevelopment)
+                    slash.RegisterCommands<SlashCommands.SlashCommands>(ulong.Parse(config.DevServerId));
+                else
+                    slash.RegisterCommands<SlashCommands.SlashCommands>();
+            });
+            
+            Client = clientBuilder.Build();
+            
             StartTime = DateTime.Now;
-
+            
             TelemetryClient = new(config.NewRelicID, config.NewRelicKey);
 
-            Version = "1.1.2";
+            Version = "1.2.0";
         }
 
         public async Task Start()
@@ -107,7 +107,7 @@ namespace Kasumi
                 {
                     Name = "kasumi.ping",
                     Type = "gauge",
-                    Value = (float)Client.Ping
+                    Value = Client.GetConnectionLatency(Client.Guilds.First().Value.Id).Milliseconds
                 };
                 MetricPayload serverPayload = new()
                 {
@@ -173,7 +173,7 @@ namespace Kasumi
             return Task.CompletedTask;
         }
 
-        private static Task Client_GuildAvailable(DiscordClient client, DSharpPlus.EventArgs.GuildCreateEventArgs e)
+        private static Task Client_GuildAvailable(DiscordClient client, DSharpPlus.EventArgs.GuildAvailableEventArgs e)
         {
             client.Logger.Log(LogLevel.Information, new EventId(701, "GuildAvailable"),
                 $"Guild available: {e.Guild.Name}");
@@ -181,7 +181,7 @@ namespace Kasumi
             return Task.CompletedTask;
         }
 
-        private static Task Client_SessionCreated(DiscordClient client, DSharpPlus.EventArgs.SessionReadyEventArgs e)
+        private static Task Client_SessionCreated(DiscordClient client, DSharpPlus.EventArgs.SessionCreatedEventArgs e)
         {
             client.Logger.Log(LogLevel.Information, new EventId(700, "ClientReady"), 
                 "Client ready!");

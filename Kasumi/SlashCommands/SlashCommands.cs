@@ -14,13 +14,13 @@ public class SlashCommands : ApplicationCommandModule
     [SlashCommand("test", "A slash command made to test the DSharpPlusSlashCommands library!")]
     public async Task TestCommand(InteractionContext ctx)
     {
-        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+        await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent("Success!"));
     }
 
     [SlashCommand("colour", "Sets your colour within the current server")]
     [SlashRequireGuild]
-    [SlashRequireBotPermissions(Permissions.ManageRoles)]
+    [SlashRequireBotPermissions(false, DiscordPermission.ManageRoles)]
     public async Task Colour(InteractionContext ctx, 
         [Option("colour", "Hex code or name of colour to set")] string colour)
     {
@@ -32,7 +32,7 @@ public class SlashCommands : ApplicationCommandModule
             
         if (!Regex.IsMatch(colour, @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
                 new DiscordInteractionResponseBuilder().WithContent("You've specified an invalid colour."));
                 
             return;
@@ -51,7 +51,7 @@ public class SlashCommands : ApplicationCommandModule
                 await ctx.Member.GrantRoleAsync(r,
                     $"[Kasumi] Colour role for {Helpers.GetUsername(ctx.User)}");
                     
-                await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
                     new DiscordInteractionResponseBuilder().WithContent("Updated successfully!"));
                     
                 return;
@@ -62,20 +62,20 @@ public class SlashCommands : ApplicationCommandModule
                 
         }
             
-        DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, Permissions.None,
+        DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DiscordPermissions.None,
             new DiscordColor(colour), false, false,
             $"[Kasumi] Colour role for {Helpers.GetUsername(ctx.User)}");
             
         await ctx.Member.GrantRoleAsync(rr,
             $"[Kasumi] Colour role for {Helpers.GetUsername(ctx.User)}");
             
-        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+        await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent("Updated successfully!"));
     }
 
     [SlashCommand("setcolour", "Sets another user's colour. (Requires you have Manage Roles permission)")]
     [SlashRequireGuild]
-    [SlashRequirePermissions(Permissions.ManageRoles)]
+    [SlashRequirePermissions(false,DiscordPermission.ManageRoles)]
     public async Task SetColour(InteractionContext ctx,
         [Option("target", "Target user to set colour of")]
         DiscordUser targetUser,
@@ -89,7 +89,7 @@ public class SlashCommands : ApplicationCommandModule
             
         if (!Regex.IsMatch(colour, @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
                 new DiscordInteractionResponseBuilder().WithContent("You've specified an invalid colour."));
                 
             return;
@@ -97,7 +97,7 @@ public class SlashCommands : ApplicationCommandModule
 
         if (!ctx.Guild.Members.TryGetValue(targetUser.Id, out var target))
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
                 new DiscordInteractionResponseBuilder().WithContent("Invalid target user."));
             
             return;
@@ -116,7 +116,7 @@ public class SlashCommands : ApplicationCommandModule
                 await target.GrantRoleAsync(r,
                     $"[Kasumi] Colour role for {Helpers.GetUsername(target)} set by {Helpers.GetUsername(ctx.User)}");
                     
-                await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
                     new DiscordInteractionResponseBuilder().WithContent("Updated successfully!"));
                     
                 return;
@@ -127,27 +127,27 @@ public class SlashCommands : ApplicationCommandModule
                 
         }
             
-        DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, Permissions.None,
+        DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DiscordPermissions.None,
             new DiscordColor(colour), false, false,
             $"[Kasumi] Colour role for {Helpers.GetUsername(target)} set by {Helpers.GetUsername(ctx.User)}");
             
         await target.GrantRoleAsync(rr,
             $"[Kasumi] Colour role for {Helpers.GetUsername(target)} set by {Helpers.GetUsername(ctx.User)}");
             
-        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+        await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent("Updated successfully!"));
     }
     
     [SlashCommand("setnick", "Sets a nickname for another user")]
     [SlashRequireGuild]
-    [SlashRequirePermissions(DSharpPlus.Permissions.ManageNicknames)]
+    [SlashRequirePermissions(false,DiscordPermission.ManageNicknames)]
     public async Task Nickname(InteractionContext ctx, 
         [Option("target", "Target user to change nickname of")] DiscordUser targetUser,
         [Option("nick", "New nickname to set")] string nickname)
     {
         if (!ctx.Guild.Members.TryGetValue(targetUser.Id, out var target))
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
                 new DiscordInteractionResponseBuilder().WithContent("Invalid target user."));
             
             return;
@@ -159,18 +159,18 @@ public class SlashCommands : ApplicationCommandModule
             model.Nickname = nickname;
         });
 
-        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+        await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent(":white_check_mark:"));
     }
     
     [SlashCommand("unnick", "Removes a nickname from a user")]
-    [SlashRequirePermissions(DSharpPlus.Permissions.ManageNicknames)]
+    [SlashRequirePermissions(false,DiscordPermission.ManageNicknames)]
     public async Task Unnick(InteractionContext ctx, 
         [Option("target", "User to remove nickname from")] DiscordUser targetUser)
     {
         if (!ctx.Guild.Members.TryGetValue(targetUser.Id, out var target))
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
                 new DiscordInteractionResponseBuilder().WithContent("Invalid target user."));
             
             return;
@@ -182,7 +182,7 @@ public class SlashCommands : ApplicationCommandModule
             model.Nickname = "";
         });
             
-        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+        await ctx.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent(":white_check_mark:"));
     }
     

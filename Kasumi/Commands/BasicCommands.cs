@@ -25,7 +25,8 @@ namespace Kasumi.Commands
         [Description("Checks the bot's ping to Discord.")]
         public async Task Ping(CommandContext ctx)
         {
-            await ctx.RespondAsync($"Pong, {ctx.Client.Ping}ms");
+            int ping = ctx.Client.GetConnectionLatency(ctx.Guild.Id).Milliseconds;
+            await ctx.RespondAsync($"Pong, {ping}ms");
         }
         
         [Command("uptime")]
@@ -64,7 +65,7 @@ namespace Kasumi.Commands
             await ctx.RespondAsync("Farewell!");
             
             ctx.Client.Logger.Log(LogLevel.Information, new EventId(705, "ClientShutdown"), 
-                $"Shutdown initiated by {ctx.User.Username}#{ctx.User.Discriminator} ({ctx.User.Id})");
+                $"Shutdown initiated by {ctx.User.Username} ({ctx.User.Id})");
             
             await ctx.Client.DisconnectAsync();
 
@@ -94,19 +95,19 @@ namespace Kasumi.Commands
             switch (type)
             {
                 case "p":
-                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Playing));
+                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, DiscordActivityType.Playing));
                     break;
                 
                 case "l":
-                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.ListeningTo));
+                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, DiscordActivityType.ListeningTo));
                     break;
                 
                 case "w":
-                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Watching));
+                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, DiscordActivityType.Watching));
                     break;
                 
                 case "s":
-                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, ActivityType.Streaming));
+                    await ctx.Client.UpdateStatusAsync(new DiscordActivity(status, DiscordActivityType.Streaming));
                     break;
             }
         }

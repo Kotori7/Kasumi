@@ -15,7 +15,7 @@ namespace Kasumi.Commands
     {
         [Command("get")]
         [Description("Gives you a self-assignable role")]
-        [RequireBotPermissions(Permissions.ManageRoles)]
+        [RequireBotPermissions(false, DiscordPermission.ManageRoles)]
         public async Task GetCommand(CommandContext ctx, [RemainingText] string name)
         {
             using (var db = new RolesContext())
@@ -50,7 +50,7 @@ namespace Kasumi.Commands
 
         [Command("remove")]
         [Description("Removes a self-assignable role from you.")]
-        [RequireBotPermissions(Permissions.ManageRoles)]
+        [RequireBotPermissions(false, DiscordPermission.ManageRoles)]
         public async Task RemoveCommand(CommandContext ctx, [RemainingText] string name)
         {
             using (var db = new RolesContext())
@@ -82,7 +82,7 @@ namespace Kasumi.Commands
 
         [Command("add")]
         [Description("Adds a self-assignable role that members can add to themselves.")]
-        [RequirePermissions(Permissions.ManageRoles)]
+        [RequirePermissions(false, DiscordPermission.ManageRoles)]
         public async Task AddCommand(CommandContext ctx, DiscordRole role, [RemainingText] string name)
         {
             using (var db = new RolesContext())
@@ -103,7 +103,7 @@ namespace Kasumi.Commands
 
         [Command("delete")]
         [Description("Deletes a self-assignable role. This will not automatically remove it from users who have it.")]
-        [RequirePermissions(Permissions.ManageRoles)]
+        [RequirePermissions(false, DiscordPermission.ManageRoles)]
         public async Task DeleteCommand(CommandContext ctx, [RemainingText] string name)
         {
             using (var db = new RolesContext())

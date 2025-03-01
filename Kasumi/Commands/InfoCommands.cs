@@ -30,7 +30,8 @@ namespace Kasumi.Commands
             
             embedBuilder.AddField("Name", ctx.Guild.Name);
             embedBuilder.AddField("ID", ctx.Guild.Id.ToString());
-            embedBuilder.AddField("Owner", ctx.Guild.Owner.Username + "#" + ctx.Guild.Owner.Discriminator);
+            DiscordMember owner = await ctx.Guild.GetMemberAsync(ctx.Guild.OwnerId);
+            embedBuilder.AddField("Owner", owner.Username);
             embedBuilder.AddField("Region", ctx.Guild.VoiceRegion.Name);
             embedBuilder.AddField("Members", ctx.Guild.MemberCount.ToString());
             embedBuilder.AddField("Creation Date", ctx.Guild.CreationTimestamp.Date.ToLongDateString());
@@ -83,7 +84,7 @@ namespace Kasumi.Commands
                 return;
             }
             
-            embedBuilder.AddField("Name", user.Username + "#" + user.Discriminator);
+            embedBuilder.AddField("Name", user.Username);
             embedBuilder.AddField("ID", user.Id.ToString());
             embedBuilder.AddField("Discord Join Date", user.CreationTimestamp.UtcDateTime.ToLongDateString());
             

@@ -12,11 +12,10 @@ namespace Kasumi.Commands
     {
         [Command("ban")]
         [Description("Bans a user.")]
-        [RequirePermissions(DSharpPlus.Permissions.BanMembers)]
+        [RequirePermissions(false, DiscordPermission.BanMembers)]
         public async Task Ban(CommandContext ctx, DiscordMember mem, [RemainingText] string reason)
         {
-            await ctx.Guild.BanMemberAsync(mem, 0, 
-                $"[Ban by {Helpers.GetUsername(ctx.User)}] {reason}");
+            await ctx.Guild.BanMemberAsync(mem, TimeSpan.Zero, reason);
             
             await ctx.RespondAsync($"{Helpers.GetUsername(ctx.User)} got bent");
         }
@@ -24,7 +23,7 @@ namespace Kasumi.Commands
         [Command("nuke")]
         [Description("Nukes a specified amount of messages from the channel.")]
         [Aliases("purge", "massdel")]
-        [RequirePermissions(DSharpPlus.Permissions.ManageMessages)]
+        [RequirePermissions(false, DiscordPermission.ManageMessages)]
         public async Task Nuke(CommandContext ctx, [Description("The amount of messages to delete")] int amount)
         {
             await ctx.Message.DeleteAsync($"Message nuke called by {Helpers.GetUsername(ctx.User)}");
@@ -40,7 +39,7 @@ namespace Kasumi.Commands
         [Command("nickname")]
         [Description("Sets a nickname for another user")]
         [Aliases("nick")]
-        [RequirePermissions(DSharpPlus.Permissions.ManageNicknames)]
+        [RequirePermissions(false, DiscordPermission.ManageNicknames)]
         public async Task Nickname(CommandContext ctx, DiscordMember target, [RemainingText] string nickname)
         {
             await target.ModifyAsync(delegate(MemberEditModel model)
@@ -55,7 +54,7 @@ namespace Kasumi.Commands
 
         [Command("unnick")]
         [Description("Removes a nickname from a user")]
-        [RequirePermissions(DSharpPlus.Permissions.ManageNicknames)]
+        [RequirePermissions(false, DiscordPermission.ManageNicknames)]
         public async Task Unnick(CommandContext ctx, DiscordMember target)
         {
             await target.ModifyAsync(delegate(MemberEditModel model)

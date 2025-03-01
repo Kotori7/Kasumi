@@ -15,7 +15,7 @@ namespace Kasumi.Commands
     {
         
         [Command("colour")]
-        [RequireBotPermissions(DSharpPlus.Permissions.ManageRoles)]
+        [RequireBotPermissions(false, DiscordPermission.ManageRoles)]
         [Aliases("color")] // fuckin americans
         public async Task Colour(CommandContext ctx, [Description("Hex code or name of a colour.")] string colour)
         {
@@ -54,7 +54,7 @@ namespace Kasumi.Commands
                 
             }
             
-            DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DSharpPlus.Permissions.None,
+            DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DiscordPermissions.None,
                 new DiscordColor(colour), false, false,
                 $"[Kasumi] Colour role for {Helpers.GetUsername(ctx.User)}");
             
@@ -67,7 +67,7 @@ namespace Kasumi.Commands
         [Command("setcolour")]
         [Description("Sets someone else's colour.")]
         [Aliases("setcolor")]
-        [RequirePermissions(DSharpPlus.Permissions.ManageRoles)]
+        [RequirePermissions(false, DiscordPermission.ManageRoles)]
         public async Task SetColour(CommandContext ctx, DiscordMember member, string colour)
         {
             if (colours.ContainsKey(colour))
@@ -104,7 +104,7 @@ namespace Kasumi.Commands
                     if (ctx.Guild.Members.Count(m => m.Value.Roles.Any(p => p == r)) == 0)
                         await r.DeleteAsync();
             }
-            DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DSharpPlus.Permissions.None, 
+            DiscordRole rr = await ctx.Guild.CreateRoleAsync("kasumi" + colour, DiscordPermissions.None, 
                 new DiscordColor(colour), false, false,
                 $"[Kasumi] Colour role override for {Helpers.GetUsername(ctx.User)}");
             
@@ -116,7 +116,7 @@ namespace Kasumi.Commands
         
         [Command("cleanup")]
         [Description("Cleans up unused colour roles.")]
-        [RequirePermissions(DSharpPlus.Permissions.ManageRoles)]
+        [RequirePermissions(false, DiscordPermission.ManageRoles)]
         public async Task Cleanup(CommandContext ctx)
         {
             int count = 0;
