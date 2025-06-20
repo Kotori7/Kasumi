@@ -21,5 +21,8 @@ namespace Kasumi.Entities
         
         [JsonProperty("new_relic_license_key")]
         public string NewRelicKey { get; private set; }
+        
+        [JsonProperty("mongodb_url")]
+        public string MongoDBUrl { get; private set; }
     }
 }

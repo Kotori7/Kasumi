@@ -6,6 +6,8 @@ using DSharpPlus.Entities;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Kasumi.Database;
+using Kasumi.Entities;
+using MongoDB.Driver;
 
 namespace Kasumi.Commands
 {
@@ -18,34 +20,37 @@ namespace Kasumi.Commands
         [RequireBotPermissions(false, DiscordPermission.ManageRoles)]
         public async Task GetCommand(CommandContext ctx, [RemainingText] string name)
         {
-            using (var db = new RolesContext())
+            var role = Bot.RolesCollection.AsQueryable()
+                .Where(r => r.ServerId == ctx.Guild.Id)
+                .Single(r => r.Name == name);
+
+            if (role == null)
             {
-                var role = db.AssignableRoles
-                    .Where(r => r.ServerId == ctx.Guild.Id.ToString())
-                    .Single(r => r.Name == name);
-                
-                if (role == null)
+                await ctx.RespondAsync("I couldn't find a role in this server by that name.");
+                return;
+            }
+
+            try
+            {
+                DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id == role.RoleId).Value;
+
+                if (ctx.Member.Roles.Contains(dRole))
                 {
-                    await ctx.RespondAsync("I couldn't find a role in this server by that name.");
+                    await ctx.RespondAsync("You already have this role.");
                     return;
                 }
 
-                try
-                {
-                    DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id.ToString() == role.RoleId).Value;
-                    
-                    await ctx.Member.GrantRoleAsync(dRole, "[Kasumi] Giving user self-assignable role.");
-                    
-                    await ctx.RespondAsync($"Gave you the `{dRole.Name}` role.");
-                }
-                
-                catch
-                {
-                    await ctx.RespondAsync(
-                        "An error occurred when trying to give you a role. The role you want has probably been deleted.");
-                }
-                
+                await ctx.Member.GrantRoleAsync(dRole, "[Kasumi] Giving user self-assignable role.");
+
+                await ctx.RespondAsync($"Gave you the `{dRole.Name}` role.");
             }
+
+            catch
+            {
+                await ctx.RespondAsync(
+                    "An error occurred when trying to give you a role. The role you want has probably been deleted.");
+            }
+                
         }
 
         [Command("remove")]
@@ -53,31 +58,28 @@ namespace Kasumi.Commands
         [RequireBotPermissions(false, DiscordPermission.ManageRoles)]
         public async Task RemoveCommand(CommandContext ctx, [RemainingText] string name)
         {
-            using (var db = new RolesContext())
+            var role = Bot.RolesCollection.AsQueryable()
+                .Where(r => r.ServerId == ctx.Guild.Id)
+                .Single(r => r.Name == name);
+
+            if (role == null)
             {
-                var role = db.AssignableRoles
-                    .Where(r => r.ServerId == ctx.Guild.Id.ToString())
-                    .Single(r => r.Name == name);
-                
-                if (role == null)
-                {
-                    await ctx.RespondAsync("I couldn't find a role in this server by that name.");
-                    return;
-                }
-                
-                DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id.ToString() == role.RoleId).Value;
-                
-                if (!ctx.Member.Roles.Contains(dRole))
-                {
-                    await ctx.RespondAsync("You don't seem to have that role.");
-                    
-                    return;
-                }
-                
-                await ctx.Member.RevokeRoleAsync(dRole, "[Kasumi] Removing self-assignable role.");
-                
-                await ctx.RespondAsync($"You should no longer have the `{dRole.Name}` role.");
+                await ctx.RespondAsync("I couldn't find a role in this server by that name.");
+                return;
             }
+
+            DiscordRole dRole = ctx.Guild.Roles.Single(r => r.Value.Id == role.RoleId).Value;
+
+            if (!ctx.Member.Roles.Contains(dRole))
+            {
+                await ctx.RespondAsync("You don't seem to have that role.");
+
+                return;
+            }
+
+            await ctx.Member.RevokeRoleAsync(dRole, "[Kasumi] Removing self-assignable role.");
+
+            await ctx.RespondAsync($"You should no longer have the `{dRole.Name}` role.");
         }
 
         [Command("add")]
@@ -85,20 +87,24 @@ namespace Kasumi.Commands
         [RequirePermissions(false, DiscordPermission.ManageRoles)]
         public async Task AddCommand(CommandContext ctx, DiscordRole role, [RemainingText] string name)
         {
-            using (var db = new RolesContext())
+            if (Bot.RolesCollection.AsQueryable()
+                .Where(r => r.ServerId == ctx.Guild.Id)
+                .Any(r => r.Name == name))
             {
-                var dbRole = new AssignableRole
-                {
-                    Name = name,
-                    RoleId = role.Id.ToString(),
-                    ServerId = ctx.Guild.Id.ToString()
-                };
-                
-                db.AssignableRoles.Add(dbRole);
-                await db.SaveChangesAsync();
-                
-                await ctx.RespondAsync("Role added successfully.");
+                await ctx.RespondAsync("There is already a self-assignable role with that name.");
+                return;
             }
+            
+            var dbRole = new Role
+            {
+                Name = name,
+                RoleId = role.Id,
+                ServerId = ctx.Guild.Id
+            };
+
+            await Bot.RolesCollection.InsertOneAsync(dbRole);
+
+            await ctx.RespondAsync("Role added successfully.");
         }
 
         [Command("delete")]
@@ -106,49 +112,45 @@ namespace Kasumi.Commands
         [RequirePermissions(false, DiscordPermission.ManageRoles)]
         public async Task DeleteCommand(CommandContext ctx, [RemainingText] string name)
         {
-            using (var db = new RolesContext())
+            var role = Bot.RolesCollection.AsQueryable()
+                .Where(r => r.ServerId == ctx.Guild.Id)
+                .Single(r => r.Name == name);
+
+            if (role == null)
             {
-                var role = db.AssignableRoles
-                    .Where(r => r.ServerId == ctx.Guild.Id.ToString())
-                    .Single(r => r.Name == name);
-                
-                if (role == null)
-                {
-                    await ctx.RespondAsync("I couldn't find a role in this server by that name.");
-                    return;
-                }
-                
-                db.AssignableRoles.Remove(role);
-                await db.SaveChangesAsync();
-                
-                await ctx.RespondAsync("Removed that role successfully. It has not been taken from any users that have it, though.");
+                await ctx.RespondAsync("I couldn't find a role in this server by that name.");
+                return;
             }
+
+            var filter = Builders<Role>.Filter.Eq(r => r.Id, role.Id);
+            await Bot.RolesCollection.DeleteOneAsync(filter);
+
+            await ctx.RespondAsync(
+                "Removed that role successfully. It has not been taken from any users that have it, though.");
         }
 
         [Command("list")]
         [Description("Lists all available roles in this guild")]
         public async Task ListCommand(CommandContext ctx)
         {
-            using (var db = new RolesContext())
+            var roles = Bot.RolesCollection.AsQueryable()
+                .Where(r => r.ServerId == ctx.Guild.Id);
+
+            if (!roles.Any())
             {
-                var roles = db.AssignableRoles
-                    .Where(r => r.ServerId == ctx.Guild.Id.ToString());
-                
-                if (!roles.Any())
-                {
-                    await ctx.RespondAsync("There are no roles available in this server.");
-                    
-                    return;
-                }
+                await ctx.RespondAsync("There are no roles available in this server.");
 
-                string output = "";
-                foreach (var role in roles)
-                {
-                    output += $"`{role.Name}` ";
-                }
-
-                await ctx.RespondAsync($"Available roles: {output}");
+                return;
             }
+
+            string output = "";
+            foreach (var role in roles)
+            {
+                output += $"`{role.Name}` ";
+            }
+
+            await ctx.RespondAsync($"Available roles: {output}");
+            
         }
     }
 }

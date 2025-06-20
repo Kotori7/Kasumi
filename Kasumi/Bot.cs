@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading;
 using Kasumi.Commands;
@@ -8,10 +7,11 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.SlashCommands;
-using DSharpPlus.VoiceNext;
-using Kasumi.SlashCommands;
+using Kasumi.Entities;
 using Kasumi.Telemetry;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 #pragma warning disable CS0618
 
@@ -20,7 +20,8 @@ namespace Kasumi
     public class Bot
     {
         public static DiscordClient Client { get; private set; }
-        public static CommandsNextExtension Commands { get; private set; }
+        public static MongoClient MongoClient { get; private set; }
+        public static IMongoCollection<Role> RolesCollection { get; private set; }
         public static DateTime StartTime { get; private set; }
         public static bool IsDevelopment { get; private set; }
         public static TelemetryClient TelemetryClient { get; private set; }
@@ -78,6 +79,10 @@ namespace Kasumi
             
             TelemetryClient = new(config.NewRelicID, config.NewRelicKey);
 
+            var settings = MongoClientSettings.FromConnectionString(config.MongoDBUrl);
+            settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+            MongoClient = new MongoClient(settings);
+
             Version = "1.2.0";
         }
 
@@ -86,10 +91,29 @@ namespace Kasumi
             Client.Logger.Log(LogLevel.Information, new EventId(100, "Startup"), 
                 $"Starting Kasumi version {Version} ({(IsDevelopment ? "development" : "production")})");
             
+            Client.Logger.Log(LogLevel.Information,  new EventId(100, "Startup"),
+                $"Connecting to MongoDB Server: {MongoClient.Settings.Server.Host}:{MongoClient.Settings.Server.Port}");
+            try
+            {
+                var result = MongoClient.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
+                Client.Logger.Log(LogLevel.Information, new EventId(100, "Startup"),
+                    "Connected to MongoDB");
+                RolesCollection = MongoClient.GetDatabase("kasumi_dev").GetCollection<Role>("roles");
+            }
+            catch (Exception ex)
+            {
+                Client.Logger.Log(LogLevel.Critical, new EventId(100, "Startup"), ex, "Error connecting to MongoDB");
+            }
+            
             await Client.ConnectAsync();
 
-            Thread metricsThread = new Thread(RunMetrics);
-            metricsThread.Start();
+            if (!IsDevelopment)
+            {
+                Client.Logger.Log(LogLevel.Information,  new EventId(100, "Startup"),
+                    "Starting metrics reporting thread");
+                Thread metricsThread = new Thread(RunMetrics);
+                metricsThread.Start();
+            }
             
             await Task.Delay(-1);
         }
