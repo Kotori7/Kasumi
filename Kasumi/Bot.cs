@@ -98,7 +98,8 @@ namespace Kasumi
                 var result = MongoClient.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
                 Client.Logger.Log(LogLevel.Information, new EventId(100, "Startup"),
                     "Connected to MongoDB");
-                RolesCollection = MongoClient.GetDatabase("kasumi_dev").GetCollection<Role>("roles");
+                var dbName = IsDevelopment ? "kasumi_dev" : "kasumi";
+                RolesCollection = MongoClient.GetDatabase(dbName).GetCollection<Role>("roles");
             }
             catch (Exception ex)
             {
